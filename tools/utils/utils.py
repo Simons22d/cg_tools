@@ -1,5 +1,5 @@
 from os.path import isfile
-from reports import db
+from tools import db
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
@@ -8,8 +8,8 @@ from os.path import isfile
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
-from reports.models.models import Reminder, BranchUser, Branch
-from reports import mail
+from tools.models.models import Reminder, User, Branch
+from tools import mail
 from flask_mail import Message
 
 # in to str mapper

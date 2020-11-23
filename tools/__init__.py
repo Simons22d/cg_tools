@@ -8,6 +8,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from flask_mail import Mail
+
 load_dotenv()
 
 db_user = os.getenv("DBUSER")
@@ -27,7 +28,6 @@ app.config["MAIL_PORT"] = 4050
 app.config["MAIL_USE_TLS"] = False
 app.config["MAIL_USERNAME"] = "itsupport@cargen.com"
 app.config["MAIL_PASSWORD"] = 'support2020'
-
 
 # adding marshmallow
 db = SQLAlchemy(app)

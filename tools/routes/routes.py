@@ -1,16 +1,15 @@
-from reports import app, db
+from tools import app, db
 from flask import request
-from reports.utils.utils import get_issue_count, filename, excel
+from tools.utils.utils import get_issue_count, filename, excel
 from flask import jsonify, send_from_directory
 from flask_sqlalchemy import sqlalchemy
 
-from reports.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
+from tools.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
-from reports.utils.utils import send_mail, remind_users,email_info
-import email_to
+from tools.utils.utils import send_mail, remind_users,email_info
 from flask_mail import Message
-from reports import mail
+from tools import mail
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
