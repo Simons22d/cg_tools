@@ -7,7 +7,7 @@ from flask_sqlalchemy import sqlalchemy
 from tools.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
-from tools.utils.utils import send_mail, remind_users,email_info
+from tools.utils.utils import send_mail, remind_users, email_info
 from flask_mail import Message
 from tools import mail
 
@@ -92,7 +92,7 @@ def add_branch_report():
     # order by date get the last
     # branch_from_db = BranchReports.query.filter_by(branch=branch).order_by(BranchReports.date_added.asc()).first()
     data = request.json["data"]
-    print(categories)
+    print(">>>>>", categories)
     for category in categories:
         category_id = int(category.id)
         severity = int(data[category.name.lower()]["severity"])
@@ -217,12 +217,11 @@ def send_email_():
 
 
 @app.route('/user/seed', methods=["POST"])
-def add_user_():
+def add_user_seed():
     users = [
         {"email": "denniskiruku@gmail.com", "name": "Denis Kiruku", "branch": 1},
         {"email": "kirukuwambui@gmail.com", "name": "Kiruku Wambui", "branch": 1}
     ]
-
     for user in users:
         print(user)
         lookup = User(user["email"], user["name"], user["branch"])
@@ -234,6 +233,44 @@ def add_user_():
     return jsonify(user)
 
 
+@app.route('/user/add', methods=["POST"])
+def add_user_():
+    name = request.json["name"]
+    email_ = request.json["email"]
+    branch = request.json["branch"]
+    lookup = User(email_,name,branch)
+    try:
+        db.session.add(lookup)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError:
+        return jsonify({"msg": "Error! User exists"})
+    return jsonify(user_schema.dump(lookup))
+
+
+@app.route('/branch/users/get', methods=["GET", "POST"])
+def get_branch_users():
+    users = User.query.all()
+    users_ = users_schema.dump(users)
+    print(users_)
+    final = list()
+    for user in users_:
+        branch = Branch.query.get(user["branch"])
+        user.update({"branch":branch_schema.dump(branch)["name"]})
+        final.append(user)
+    return jsonify(final)
+
+
+@app.route("/branch/user/remove",methods=["GET","POST"])
+def remove_user():
+    email = request.json["email"]
+    data = User.query.filter_by(email=email).first()
+    print(data)
+    db.session.delete(data)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(data))
+
+
 @app.route("/send/email/reminder", methods=["POST"])
 def remind():
     return remind_users()
@@ -241,13 +278,12 @@ def remind():
 
 @app.route('/email', methods=["POST"])
 def email():
-    print(":>>>> email hit")
     return send_mail("deniskiruku@gmail.com", "tests from localhost",
                      "Just like any other body")
 
 
 @app.route('/email/2', methods=["POST"])
 def email_2():
-    msg = Message("Tests ....",sender="itsupport@cargen.com",recipients=["denis.kiruku@cargen.com"])
+    msg = Message("Tests ....", sender="itsupport@cargen.com", recipients=["denis.kiruku@cargen.com"])
     mail.send(msg)
     return dict()

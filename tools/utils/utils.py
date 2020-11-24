@@ -8,7 +8,7 @@ from os.path import isfile
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
-from tools.models.models import Reminder, User, Branch
+from tools.models.models import Reminder, User, Branch,BranchReports
 from tools import mail
 from flask_mail import Message
 
@@ -140,7 +140,7 @@ def report_added_today(date):
 
 def send_mail(_to, subject, body):
     _from = "itsupport@cargen.com"
-    msg = Message(subject, sender="itsupport@cargen.com", recipients=["denniskiruku@gmail.com"], body=body)
+    msg = Message(subject, sender="itsupport@cargen.com", recipients=["denniskiruku@gmail.com"],html=body)
     mail.send(msg)
     return dict()
 
@@ -284,33 +284,28 @@ def email_body(section):
 
 def remind_users():
     users = User.query.all()
-    reminders = Reminder.query.filter(Reminder.date_added.like(datetime.now().strftime("%d%m%y"))).all()
+    reminders = Reminder.query.all()
+    today = datetime.now()
+    branch_reports = BranchReports.query.all()
     for user in users:
-        if reminders:
-            # print("reminders exist")
-            for reminder in reminders:
-                if not reminder.user == user.id:
-                    # send an email
-                    print("send email")
-                    email_info(user.email, "USER", user.branch, user.name)
-                    # update db for reminder
-                    lookup = Reminder(user.id, True)
-                    db.session.add(lookup)
-                    db.session.commit()
-        else:
-            # print("reminders do not exist")
-            for user_ in users:
-                print(user_.id, user_.name, user_.email)
-                try:
-                    email_info(user_.email, "USER", user_.branch, user_.name)
-                    print("send email")
-                except Exception:
-                    print("Did not send email.")
-                # update db for reminder
-                # print("reminders to DB")
-                lookup = Reminder(user.id, True)
-                db.session.add(lookup)
-                db.session.commit()
-                # print("here")
+        # check if user has made a report today
+        for report in branch_reports:
+            # check report date
+            if not same_day(today,report.date_added):
+                # report has not been sent
+                # check if  you have reminders for today
+                for reminder in reminders:
+                    if same_day(today, reminder.date_added):
+                        email_info(user.email, "USER", user.branch, user.name)
+                        lookup = Reminder(user.id, True)
+                        db.session.add(lookup)
+                        db.session.commit()
     return dict()
 
+
+def format_date(date) -> int:
+    return int(date.strftime("%d%m%y"))
+
+
+def same_day(date_one,date_two):
+    return int(format_date(date_one)) == int(format_date(date_two))
