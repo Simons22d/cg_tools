@@ -1,0 +1,12 @@
+[Unit]
+Description=Cargen Branch Mail Module
+After=network.target
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=dev
+ExecStart=/usr/local/bin/python3.7  /home/dev/cg_tools/app.py
+
+[Install]
+WantedBy=multi-user.target
