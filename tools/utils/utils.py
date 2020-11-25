@@ -300,6 +300,8 @@ def remind_users():
                         lookup = Reminder(user.id, True)
                         db.session.add(lookup)
                         db.session.commit()
+                        log(f"Email send to {user.name} : {user.email}")
+
     return dict()
 
 
@@ -309,3 +311,7 @@ def format_date(date) -> int:
 
 def same_day(date_one,date_two):
     return int(format_date(date_one)) == int(format_date(date_two))
+
+def log(msg):
+    print(f"{datetime.now().strftime('%d:%m:%Y %H:%M:%S')} — {msg}")
+    return True
