@@ -11,6 +11,7 @@ import requests
 from tools.models.models import Reminder, User, Branch,BranchReports
 from tools import mail
 from flask_mail import Message
+from flask import jsonify
 
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
@@ -140,7 +141,7 @@ def report_added_today(date):
 
 def send_mail(_to, subject, body):
     _from = "itsupport@cargen.com"
-    msg = Message(subject, sender="itsupport@cargen.com", recipients=["denniskiruku@gmail.com"],html=body)
+    msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to],html=body)
     mail.send(msg)
     return dict()
 
@@ -284,25 +285,29 @@ def email_body(section):
 
 def remind_users():
     users = User.query.all()
-    reminders = Reminder.query.all()
+    # reminders = Reminder.query.all()
     today = datetime.now()
-    branch_reports = BranchReports.query.all()
+    date = today.strftime("%Y-%m-%d")
+    print(date)
     for user in users:
-        # check if user has made a report today
-        for report in branch_reports:
-            # check report date
-            if not same_day(today,report.date_added):
-                # report has not been sent
-                # check if  you have reminders for today
-                for reminder in reminders:
-                    if same_day(today, reminder.date_added):
-                        email_info(user.email, "USER", user.branch, user.name)
-                        lookup = Reminder(user.id, True)
-                        db.session.add(lookup)
-                        db.session.commit()
-                        log(f"Email send to {user.name} : {user.email}")
-
+        if not user_has_submitted(user.branch):
+            log("has not submitted")
+            email_info(user.email, "USER", user.branch, user.name)
+            lookup = Reminder(user.id, True)
+            db.session.add(lookup)
+            db.session.commit()
+            log(f"Reminded -> {user.email}")
     return dict()
+
+
+def user_has_submitted(branch_user_in_charge):
+    today = datetime.now()
+    date = today.strftime("%Y-%m-%d")
+    reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
+                                                              f"{date}%'")]
+    for report in reports:
+        return int(branch_user_in_charge) == int(report["branch"])
+    raise Exception("An Error Occured")
 
 
 def format_date(date) -> int:

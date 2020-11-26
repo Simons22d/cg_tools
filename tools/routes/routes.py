@@ -7,9 +7,10 @@ from flask_sqlalchemy import sqlalchemy
 from tools.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
-from tools.utils.utils import send_mail, remind_users, email_info
+from tools.utils.utils import send_mail, remind_users, email_info,user_has_submitted
 from flask_mail import Message
 from tools import mail
+from datetime import datetime
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
@@ -84,24 +85,23 @@ def get_all_bikes():
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
 def add_branch_report():
+    print("branch report add")
     # get all categories
     categories = Category.query.all()
-    #  get data
     branch = request.json["branch"]
-    #  get reports for the branch
-    # order by date get the last
-    # branch_from_db = BranchReports.query.filter_by(branch=branch).order_by(BranchReports.date_added.asc()).first()
     data = request.json["data"]
-    print(">>>>>", categories)
     for category in categories:
         category_id = int(category.id)
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
 
+        print(branch,category_id,severity,comments)
+
         # adding to the DB
         lookup = BranchReports(branch, severity, category_id, comments)
         db.session.add(lookup)
         db.session.commit()
+
     return jsonify(data)
 
 
@@ -271,14 +271,33 @@ def remove_user():
     return jsonify(user_schema.dump(data))
 
 
+@app.route("/branch/todays/submit",methods=["POST","GET"])
+def get_lastest_update():
+    date = datetime.now().strftime("%Y-%m-%d")
+    date = '2020-11-23'
+
+    lookup = db.session.execute(f"SELECT DISTINCT br.branch, b.*, br.* "
+                                f"FROM branch b "
+                                f"INNER JOIN branch_reports br "
+                                f"WHERE b.id = br.branch "
+                                f"AND  br.date_added "
+                                f"LIKE  '%{date}%' ORDER BY "
+                                f"br.date_added DESC;")
+    return jsonify([dict(row) for row in lookup])
+
+
 @app.route("/send/email/reminder", methods=["POST"])
 def remind():
     return remind_users()
 
 
+@app.route("/has/submitted",methods=["POST"])
+def sdfsdf():
+    return user_has_submitted(14)
+
 @app.route('/email', methods=["POST"])
 def email():
-    return send_mail("deniskiruku@gmail.com", "tests from localhost",
+    return send_mail("denis.kiruku@cargen.com", "tests from localhost",
                      "Just like any other body")
 
 
