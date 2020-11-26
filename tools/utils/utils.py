@@ -172,17 +172,17 @@ def email_info(_to, kind, branch, user=""):
                <html>
                  <body>
                    <p>
-                       Dear {user},<br>
+                       Dear {user},<br><br>
                        How are you?<br>
                        This is IT Support.<br>
-                       <br><br>
+                       <br>
                        Kindly fill the {branch} Branch report for {date}.
 
                        <i>This is an automatic message.<br> 
                         <b>Please fill the report form to stop the message from sending.</b> 
                         </i>
                         You can find the form in the following link:<br>
-                        <a href="http://192.168.12.200:81/tools/">Fill The Form</a>
+                        <a href="http://192.168.12.200:81/tools/">Link to Form.</a>
                        <br><br>
                        Kind regards <br>
                        IT Support.<br>
@@ -243,9 +243,6 @@ def email_body(section):
                                   {section}
 
                              </p>
-                             <p style="color:#586069!important;font-family:-apple-system,BlinkMacSystemFont,
-'Segoe UI',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:12px!important;font-weight:normal;line-height:1.5;margin:0 0 15px;padding:0;text-align:left" align="left">You are receiving this email because a branch was added with your email on our platform.</p>
-
                                              <div style="box-sizing:border-box;clear:both;width:100%">
                                                  <hr style="background:#d9d9d9;border-style:solid none none;border-top-color:#e1e4e8;border-width:1px 0 0;color:#959da5;font-size:12px;height:0;line-height:18px;margin:24px 0 30px;overflow:visible">
                                            <div style="box-sizing:border-box;color:#959da5;font-size:12px;line-height:18px">
