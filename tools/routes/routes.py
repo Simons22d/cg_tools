@@ -173,10 +173,8 @@ def seed_branches():
 def seed_categories():
     categories = [
         {"name": "okay", "weight": 1},
-        {"name": "low", "weight": 2},
-        {"name": "high", "weight": 3},
-        {"name": "medium", "weight": 4},
-        {"name": "not funcational", "weight": 5}
+        {"name": "slow", "weight": 2},
+        {"name": "not funcational", "weight": 3}
     ]
 
     for category in categories:
@@ -271,19 +269,41 @@ def remove_user():
     return jsonify(user_schema.dump(data))
 
 
-@app.route("/branch/todays/submit",methods=["POST","GET"])
+@app.route("/branch/todays/submit",methods=["POST"])
 def get_lastest_update():
+    # get all branches
+    branches = Branch.query.all()
     date = datetime.now().strftime("%Y-%m-%d")
-    date = '2020-11-23'
+    # final dict
+    final = list()
+    for branch in branches:
+        lookup = db.session.execute(f"SELECT b.*, brd.* "
+                                    f"FROM branch b "
+                                    f"INNER JOIN branch_reports brd "
+                                    f"ON b.id = brd.branch "
+                                    f"AND brd.branch = {branch.id} "
+                                    f"AND brd.date_added "
+                                    f"LIKE '%{date}%' "
+                                    f"ORDER BY brd.date_added DESC")
+        final.append({"name":branch.name,"data" :[dict(row) for row in lookup]})
+    return jsonify(final)
 
-    lookup = db.session.execute(f"SELECT DISTINCT br.branch, b.*, br.* "
+
+@app.route("/branch/todays/submit/single",methods=["POST"])
+def get_lastest_update_():
+    branch = request.json["branch"]
+    date = datetime.now().strftime("%Y-%m-%d")
+    # sort last per branch
+    lookup = db.session.execute(f"SELECT b.*, brd.* "
                                 f"FROM branch b "
-                                f"INNER JOIN branch_reports br "
-                                f"WHERE b.id = br.branch "
-                                f"AND  br.date_added "
-                                f"LIKE  '%{date}%' ORDER BY "
-                                f"br.date_added DESC;")
+                                f"INNER JOIN branch_reports brd "
+                                f"ON b.id = brd.branch "
+                                f"AND brd.branch = {branch} "
+                                f"AND brd.date_added "
+                                f"LIKE '%{date}%' "
+                                f"ORDER BY brd.date_added DESC")
     return jsonify([dict(row) for row in lookup])
+
 
 
 @app.route("/send/email/reminder", methods=["POST"])
@@ -295,10 +315,10 @@ def remind():
 def sdfsdf():
     return user_has_submitted(14)
 
+
 @app.route('/email', methods=["POST"])
 def email():
-    return send_mail("denis.kiruku@cargen.com", "tests from localhost",
-                     "Just like any other body")
+    return send_mail("denis.kiruku@cargen.com", "tests from localhost", "Just like any other body")
 
 
 @app.route('/email/2', methods=["POST"])
