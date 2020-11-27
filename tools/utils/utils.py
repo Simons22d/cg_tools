@@ -304,7 +304,7 @@ def remind_users():
                 else :
                     # email the user
                     log(f"Reminded ---> {user.email} — {user.branch} — {report[0]}")
-
+                    break
         else:
             # no reports
             # email all
