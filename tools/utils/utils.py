@@ -297,6 +297,8 @@ def remind_users():
     return dict()
 
 def users_to_email():
+    today = datetime.now()
+    date = today.strftime("%Y-%m-%d")
     reports_ = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
                                                        f"WHERE date_added LIKE '%{date}%'")]
     reports = [x[0] for x in reports_]
