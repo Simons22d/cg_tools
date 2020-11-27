@@ -300,6 +300,7 @@ def remind_users():
         for report in reports_:
             for user in users:
                 if not user.branch == report:
+                    continue
                     to_email.append(user.branch)
 
     print(to_email)
