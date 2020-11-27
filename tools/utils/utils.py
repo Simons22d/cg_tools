@@ -12,6 +12,7 @@ from tools.models.models import Reminder, User, Branch, BranchReports
 from tools import mail
 from flask_mail import Message
 from flask import jsonify
+import numpy as np
 
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
@@ -292,19 +293,27 @@ def remind_users():
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
     # date = "2020-11-26"
-    reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
-                                                       f"WHERE date_added LIKE '%{date}%'")]
-    to_email = list()
-    if reports:
-        reports_ = [x[0] for x in reports]
-        for report in reports_:
-            for user in users:
-                if not user.branch == report:
-                    continue
-                    to_email.append(user.branch)
+    print(users_to_email())
+    return dict()
 
-    print(to_email)
-            # if int(report) == int(user.branch):
+def users_to_email():
+    reports_ = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
+                                                       f"WHERE date_added LIKE '%{date}%'")]
+    reports = [x[0] for x in reports_]
+    users = users_list()
+    to_email = np.setdiff1d(reports, users)
+    return to_email
+
+
+def users_list ():
+    users = User.query.all()
+    final = list()
+    for user in users:
+        final.append(user.branch)
+    return final
+
+'''
+ # if int(report) == int(user.branch):
             # #     # do not email
             # #     log(f"Already Reminded ---> {user.email} — {user.branch} ")
             # #     break
@@ -319,14 +328,7 @@ def remind_users():
         # for user in users:
         #
             # # log("has not submitted")
-            # # email_info(user.email, "USER", user.branch, user.name)
-            # # lookup = Reminder(user.id, True)
-            # # db.session.add(lookup)
-            # # db.session.commit()
-        # else:
-        #     log("User has sent the email.\n")
-
-    return dict()
+'''
 
 
 
