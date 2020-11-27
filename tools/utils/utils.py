@@ -307,8 +307,8 @@ def remind_users():
 
 def user_has_submitted(branch_user_in_charge):
     today = datetime.now()
-    # date = today.strftime("%Y-%m-%d")
-    date = today.strftime("2020-11-26")
+    date = today.strftime("%Y-%m-%d")
+    # date = today.strftime("2020-11-26")
     reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
                                                               f"{date}%'")]
 
