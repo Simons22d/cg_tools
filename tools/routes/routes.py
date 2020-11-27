@@ -174,7 +174,7 @@ def seed_categories():
     categories = [
         {"name": "okay", "weight": 1},
         {"name": "slow", "weight": 2},
-        {"name": "not funcational", "weight": 3}
+        {"name": "not functional", "weight": 3}
     ]
 
     for category in categories:
