@@ -149,6 +149,8 @@ def send_mail(_to, subject, body):
 def email_info(_to, kind, branch, user=""):
     # user template kinds
     # date
+    branch_ = Branch.query.get(branch)
+
     date = datetime.now().strftime("%a, %d %b %y.")
     if kind == "ADMIN":
         # subject
@@ -173,14 +175,15 @@ def email_info(_to, kind, branch, user=""):
                  <body>
                    <p>
                        Dear {user},<br><br>
-                       How are you?<br>
-                       This is IT Support.<br>
+                       
+                       Please Follow the link prodived below to .<br>
                        <br>
-                       Kindly fill the {branch} Branch report for {date}.
+                       Kindly fill the {branch_.name} Branch report for {date}.
 
                        <i>This is an automatic message.<br> 
                         <b>Please fill the report form to stop the message from sending.</b> 
                         </i>
+                        <br>
                         You can find the form in the following link:<br>
                         <a href="http://192.168.12.200:81/tools/">Link to Form.</a>
                        <br><br>
