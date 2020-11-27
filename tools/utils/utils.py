@@ -293,11 +293,11 @@ def remind_users():
     date = today.strftime("%Y-%m-%d")
     for user in users:
         if not user_has_submitted(user.branch):
-            log("has not submitted")
-            email_info(user.email, "USER", user.branch, user.name)
-            lookup = Reminder(user.id, True)
-            db.session.add(lookup)
-            db.session.commit()
+            # log("has not submitted")
+            # email_info(user.email, "USER", user.branch, user.name)
+            # lookup = Reminder(user.id, True)
+            # db.session.add(lookup)
+            # db.session.commit()
             log(f"Reminded ---> {user.email}")
         else:
             log("User has sent the email.\n")
