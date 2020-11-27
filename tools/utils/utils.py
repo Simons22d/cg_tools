@@ -294,13 +294,15 @@ def remind_users():
     # date = "2020-11-26"
     reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
                                                        f"WHERE date_added LIKE '%{date}%'")]
+    to_email = list()
     if reports:
         reports_ = [x[0] for x in reports]
         for report in reports_:
             for user in users:
-                if not (user.branch == report):
-                    print("user >>>",user.branch,report)
+                if not user.branch == report:
+                    to_email.append(user.branch)
 
+    print(to_email)
             # if int(report) == int(user.branch):
             # #     # do not email
             # #     log(f"Already Reminded ---> {user.email} — {user.branch} ")
