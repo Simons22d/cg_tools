@@ -303,7 +303,7 @@ def users_to_email():
                                                        f"WHERE date_added LIKE '%{date}%'")]
     reports = [x[0] for x in reports_]
     users = users_list()
-    to_email = np.setdiff1d(users,report)
+    to_email = np.setdiff1d(users,reports)
     return to_email
 
 
