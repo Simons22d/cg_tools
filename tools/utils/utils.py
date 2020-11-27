@@ -290,28 +290,32 @@ def remind_users():
     users = User.query.all()
     # reminders = Reminder.query.all()
     today = datetime.now()
-    date = today.strftime("%Y-%m-%d")
-    # date = "2020-11-26"
+    # date = today.strftime("%Y-%m-%d")
+    date = "2020-11-26"
     reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
                                                        f"WHERE date_added LIKE '%{date}%'")]
-    print(reports)
-
-    for user in users:
-        if reports:
-            for report in reports:
-                if int(report[0]) == int(user.branch):
-                    # do not email
-                    log(f"Already Reminded ---> {user.email} — {user.branch} ")
-                    break
-                else :
-                    # email the user
-                    log(f"Reminded ---> {user.email} — {user.branch} — {report[0]}")
-                    break
-        else:
-            # no reports
-            # email all
-            log(f"!!!@@Reminded ALL---> {user.email} — {user.branch}")
-
+    if reports:
+        reports_ = [x[0] for x in reports]
+        for report in reports_:
+            for user in users:
+                if (user.branch == report):
+                    print("user >>>",user.branch,report)
+                else:
+                    print(">>><<>><<")
+            # if int(report) == int(user.branch):
+            # #     # do not email
+            # #     log(f"Already Reminded ---> {user.email} — {user.branch} ")
+            # #     break
+            # # else :
+            # #     # email the user
+            # #     log(f"Reminded ---> {user.email} — {user.branch} — {report[0]}")
+            # #     break
+            # else:
+                # no reports
+                # email all
+                # log(f"!!!@@Reminded ALL---> {user.email} — {user.branch}")
+        # for user in users:
+        #
             # # log("has not submitted")
             # # email_info(user.email, "USER", user.branch, user.name)
             # # lookup = Reminder(user.id, True)
@@ -321,6 +325,9 @@ def remind_users():
         #     log("User has sent the email.\n")
 
     return dict()
+
+
+
 
 
 def user_has_submitted(branch_user_in_charge):
