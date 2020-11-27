@@ -303,7 +303,14 @@ def users_to_email():
                                                        f"WHERE date_added LIKE '%{date}%'")]
     reports = [x[0] for x in reports_]
     users = users_list()
-    to_email = np.setdiff1d(users,reports)
+    users_to_email_ = np.setdiff1d(users,reports)
+    for user in users_to_email_:
+        # get user
+        user = User.query.filter_by(branch=user).first()
+        # get the branch assigned
+        branch = Branch.query.get(user)
+        # send email to usr
+        print(user,branch)
     return to_email
 
 
