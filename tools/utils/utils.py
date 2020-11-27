@@ -292,15 +292,31 @@ def remind_users():
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
     for user in users:
-        if not user_has_submitted(user.branch):
-            # log("has not submitted")
-            # email_info(user.email, "USER", user.branch, user.name)
-            # lookup = Reminder(user.id, True)
-            # db.session.add(lookup)
-            # db.session.commit()
-            log(f"Reminded ---> {user.email} — {user.branch}")
+        # if not user_has_submitted(user.branch):
+        reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
+                                                          f"WHERE date_added LIKE '%{date}%'")]
+        if reports:
+            for report in reports:
+                if int(report) == int(user.branch):
+                    # do not email
+                    final = "Do Not Email."
+                else :
+                    # email the user
+                    final = "Email."
         else:
-            log("User has sent the email.\n")
+            # no reports
+            # email all
+            final = "Email all."
+
+        log(final)
+            # # log("has not submitted")
+            # # email_info(user.email, "USER", user.branch, user.name)
+            # # lookup = Reminder(user.id, True)
+            # # db.session.add(lookup)
+            # # db.session.commit()
+            # log(f"Reminded ---> {user.email} — {user.branch}")
+        # else:
+        #     log("User has sent the email.\n")
 
     return dict()
 
@@ -311,6 +327,7 @@ def user_has_submitted(branch_user_in_charge):
     # date = today.strftime("2020-11-26")
     reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
                                                        f"{date}%'")]
+
     if reports:
         for report in reports:
             print(report)
