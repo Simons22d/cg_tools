@@ -315,7 +315,10 @@ def user_has_submitted(branch_user_in_charge):
         for report in reports:
             print(report)
             print(branch_user_in_charge, report["branch"])
-            return int(branch_user_in_charge) == int(report["branch"])
+            if int(branch_user_in_charge) == int(report["branch"]):
+                return True
+            else:
+                return False
     else:
         return False
     raise Exception("An Error Occured")
