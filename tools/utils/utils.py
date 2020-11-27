@@ -13,7 +13,7 @@ from tools import mail
 from flask_mail import Message
 from flask import jsonify
 import numpy as np
-
+import socket
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
 
@@ -288,15 +288,6 @@ def email_body(section):
 
 
 def remind_users():
-    users = User.query.all()
-    # reminders = Reminder.query.all()
-    today = datetime.now()
-    date = today.strftime("%Y-%m-%d")
-    # date = "2020-11-26"
-    print(users_to_email())
-    return dict()
-
-def users_to_email():
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
     reports_ = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
@@ -304,13 +295,23 @@ def users_to_email():
     reports = [x[0] for x in reports_]
     users = users_list()
     users_to_email_ = np.setdiff1d(users,reports)
-    for user in users_to_email_:
-        # get user
-        user_ = User.query.filter_by(branch=int(user)).first()
-        # # get the branch assigned
-        branch = Branch.query.get(int(user))
-        # # send email to usr
-        print(user_,branch)
+    print(">>>>>")
+    if users_to_email_:
+        for user in users_to_email_:
+            # get user
+            user_ = User.query.filter_by(branch=int(user)).first()
+            # get the branch assigned
+            branch_ = Branch.query.get(int(user))
+
+            name = user_.name
+            email = user_.email
+            branch = branch_.id
+            # send email to usr
+            try:
+                email_info(email,"USER",branch,name)
+                log(f"Reminded ---> {user.email} — {user.branch} — {branch_.name}")
+            except socket.gaierror:
+                log("No Connection")
     return dict()
 
 
