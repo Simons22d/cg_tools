@@ -298,10 +298,9 @@ def remind_users():
         reports_ = [x[0] for x in reports]
         for report in reports_:
             for user in users:
-                if (user.branch == report):
+                if not (user.branch == report):
                     print("user >>>",user.branch,report)
-                else:
-                    print(">>><<>><<")
+
             # if int(report) == int(user.branch):
             # #     # do not email
             # #     log(f"Already Reminded ---> {user.email} — {user.branch} ")
