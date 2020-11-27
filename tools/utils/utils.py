@@ -169,7 +169,7 @@ def email_info(_to, kind, branch, user=""):
         send_mail(_to, subject, email_body(body))
     elif kind == "USER":
         # assifned
-        subject = f"Branch Report Submitted for Today. {date}"
+        subject = f"Branch Report Submit Request For Today {date}"
         body = f'''
                <html>
                  <body>
