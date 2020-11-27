@@ -125,7 +125,6 @@ def seed_category():
         lookup = Category(category)
         db.session.add(lookup)
         db.session.commit()
-
     return jsonify(categories)
 
 
@@ -313,7 +312,8 @@ def remind():
 
 @app.route("/has/submitted",methods=["POST"])
 def sdfsdf():
-    return user_has_submitted(14)
+    user = request.json["user_id"]
+    return jsonify({'msg': user_has_submitted(user)})
 
 
 @app.route('/email', methods=["POST"])

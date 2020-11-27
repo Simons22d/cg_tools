@@ -142,7 +142,10 @@ def report_added_today(date):
 def send_mail(_to, subject, body):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to],html=body)
-    mail.send(msg)
+    try:
+        mail.send(msg)
+    except smtplib.SMTPRecipientsRefused:
+        log("email could not email user")
     return dict()
 
 
@@ -288,7 +291,6 @@ def remind_users():
     # reminders = Reminder.query.all()
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
-    print(date)
     for user in users:
         if not user_has_submitted(user.branch):
             log("has not submitted")
@@ -297,16 +299,23 @@ def remind_users():
             db.session.add(lookup)
             db.session.commit()
             log(f"Reminded ---> {user.email}")
+        else:
+            log("User has sent the email.\n")
+
     return dict()
 
 
 def user_has_submitted(branch_user_in_charge):
     today = datetime.now()
-    date = today.strftime("%Y-%m-%d")
+    # date = today.strftime("%Y-%m-%d")
+    date = today.strftime("2020-11-26")
     reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
                                                               f"{date}%'")]
+
+
     if reports :
         for report in reports:
+            print(branch_user_in_charge,report["branch"])
             return int(branch_user_in_charge) == int(report["branch"])
     else:
         return False
