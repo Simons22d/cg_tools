@@ -291,7 +291,7 @@ def remind_users():
     # reminders = Reminder.query.all()
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
-    date = "2020-11-26"
+    # date = "2020-11-26"
     reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
                                                        f"WHERE date_added LIKE '%{date}%'")]
     for user in users:
