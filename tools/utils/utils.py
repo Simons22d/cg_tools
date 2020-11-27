@@ -291,30 +291,30 @@ def remind_users():
     # reminders = Reminder.query.all()
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
+    date = "2020-11-26"
+    reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
+                                                       f"WHERE date_added LIKE '%{date}%'")]
     for user in users:
-        # if not user_has_submitted(user.branch):
-        reports = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
-                                                          f"WHERE date_added LIKE '%{date}%'")]
         if reports:
             for report in reports:
-                if int(report) == int(user.branch):
+                if int(report[0]) == int(user.branch):
                     # do not email
-                    final = "Do Not Email."
+                    log(f"Already Reminded ---> {user.email} — {user.branch}")
+
                 else :
                     # email the user
-                    final = "Email."
+                    log(f"Reminded ---> {user.email} — {user.branch}")
+
         else:
             # no reports
             # email all
-            final = "Email all."
+            log(f"Reminded ---> {user.email} — {user.branch}")
 
-        log(final)
             # # log("has not submitted")
             # # email_info(user.email, "USER", user.branch, user.name)
             # # lookup = Reminder(user.id, True)
             # # db.session.add(lookup)
             # # db.session.commit()
-            # log(f"Reminded ---> {user.email} — {user.branch}")
         # else:
         #     log("User has sent the email.\n")
 

@@ -316,6 +316,7 @@ def sdfsdf():
     return jsonify({'msg': user_has_submitted(user)})
 
 
+
 @app.route('/email', methods=["POST"])
 def email():
     return send_mail("denis.kiruku@cargen.com", "tests from localhost", "Just like any other body")
