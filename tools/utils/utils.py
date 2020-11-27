@@ -306,12 +306,12 @@ def users_to_email():
     users_to_email_ = np.setdiff1d(users,reports)
     for user in users_to_email_:
         # get user
-        user = User.query.filter_by(branch=user).first()
-        # get the branch assigned
-        branch = Branch.query.get(user)
-        # send email to usr
-        print(user,branch)
-    return to_email
+        user_ = User.query.filter_by(branch=int(user)).first()
+        # # get the branch assigned
+        branch = Branch.query.get(int(user))
+        # # send email to usr
+        print(user_,branch)
+    return dict()
 
 
 def users_list ():
