@@ -311,10 +311,9 @@ def user_has_submitted(branch_user_in_charge):
     # date = today.strftime("2020-11-26")
     reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
                                                               f"{date}%'")]
-
-
     if reports :
         for report in reports:
+            print(report)
             print(branch_user_in_charge,report["branch"])
             return int(branch_user_in_charge) == int(report["branch"])
     else:
