@@ -308,7 +308,7 @@ def remind_users():
         else:
             # no reports
             # email all
-            log(f"Reminded ---> {user.email} — {user.branch} — {report[0]}")
+            log(f"!!!@@Reminded ---> {user.email} — {user.branch}")
 
             # # log("has not submitted")
             # # email_info(user.email, "USER", user.branch, user.name)
