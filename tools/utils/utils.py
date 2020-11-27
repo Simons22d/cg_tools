@@ -296,7 +296,7 @@ def remind_users():
             lookup = Reminder(user.id, True)
             db.session.add(lookup)
             db.session.commit()
-            log(f"Reminded -> {user.email}")
+            log(f"Reminded ---> {user.email}")
     return dict()
 
 
