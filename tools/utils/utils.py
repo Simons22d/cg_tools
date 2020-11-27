@@ -8,7 +8,7 @@ from os.path import isfile
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
-from tools.models.models import Reminder, User, Branch,BranchReports
+from tools.models.models import Reminder, User, Branch, BranchReports
 from tools import mail
 from flask_mail import Message
 from flask import jsonify
@@ -141,7 +141,7 @@ def report_added_today(date):
 
 def send_mail(_to, subject, body):
     _from = "itsupport@cargen.com"
-    msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to],html=body)
+    msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
     try:
         mail.send(msg)
     except smtplib.SMTPRecipientsRefused:
@@ -298,7 +298,7 @@ def remind_users():
             # lookup = Reminder(user.id, True)
             # db.session.add(lookup)
             # db.session.commit()
-            log(f"Reminded ---> {user.email}")
+            log(f"Reminded ---> {user.email} — {user.branch}")
         else:
             log("User has sent the email.\n")
 
@@ -310,11 +310,11 @@ def user_has_submitted(branch_user_in_charge):
     date = today.strftime("%Y-%m-%d")
     # date = today.strftime("2020-11-26")
     reports = [dict(row) for row in db.session.execute(f"SELECT * FROM branch_reports WHERE date_added LIKE '%"
-                                                              f"{date}%'")]
-    if reports :
+                                                       f"{date}%'")]
+    if reports:
         for report in reports:
             print(report)
-            print(branch_user_in_charge,report["branch"])
+            print(branch_user_in_charge, report["branch"])
             return int(branch_user_in_charge) == int(report["branch"])
     else:
         return False
@@ -325,8 +325,9 @@ def format_date(date) -> int:
     return int(date.strftime("%d%m%y"))
 
 
-def same_day(date_one,date_two):
+def same_day(date_one, date_two):
     return int(format_date(date_one)) == int(format_date(date_two))
+
 
 def log(msg):
     print(f"{datetime.now().strftime('%d:%m:%Y %H:%M:%S')} — {msg}")
