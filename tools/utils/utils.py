@@ -298,7 +298,7 @@ def remind_users():
     print(users,reports)
     print(users_to_email_)
     print(">>>>>")
-    if users_to_email_:
+    if users_to_email_.any():
         for user in users_to_email_:
             # get user
             user_ = User.query.filter_by(branch=int(user)).first()
