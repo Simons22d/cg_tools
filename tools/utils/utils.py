@@ -295,6 +295,8 @@ def remind_users():
     reports = [x[0] for x in reports_]
     users = users_list()
     users_to_email_ = np.setdiff1d(users,reports)
+    print(users,reports)
+    print(users_to_email_)
     print(">>>>>")
     if users_to_email_:
         for user in users_to_email_:
