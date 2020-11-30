@@ -309,7 +309,7 @@ def remind_users():
             # send email to usr
             try:
                 email_info(email,"USER",branch,name)
-                log(f"Reminded ---> {user.email} — {user.branch} — {branch_.name}")
+                log(f"Reminded ---> {user_.email} — {user_.branch} — {branch_.name}")
             except socket.gaierror:
                 log("No Connection")
     return dict()
