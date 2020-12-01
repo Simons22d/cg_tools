@@ -132,7 +132,7 @@ def get_all_branches():
 
 @app.route("/category/seed", methods=["POST"])
 def seed_category():
-    categories = ["SAP", "ETR", 'Networks', "Emails", "Printers"]
+    categories = ["SAP", "ETR", 'Networks', "Emails", "Printers", "Mpesa"]
     for category in categories:
         lookup = Category(category)
         db.session.add(lookup)
