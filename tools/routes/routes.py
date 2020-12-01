@@ -7,7 +7,7 @@ from flask_sqlalchemy import sqlalchemy
 from tools.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
-from tools.utils.utils import send_mail, remind_users, email_info,user_has_submitted
+from tools.utils.utils import send_mail, remind_users, email_info, user_has_submitted
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -84,6 +84,17 @@ def get_all_bikes():
     return jsonify(bikes_schema.dump(lookup))
 
 
+@app.route("/bike/search", methods=["POST"])
+def search_bikes():
+    term = request.json['term']
+    term = term.strip()
+    lookup = Bike.query.all()
+    # lookup = Bike.query.filter(Bike.plate_number.like(term)).all()
+    # or Bike.query.filter(Bike.serial_number.like(term)).all()
+
+    return jsonify(bikes_schema.dump(lookup))
+
+
 @app.route("/branch/report/add", methods=['POST', 'GET'])
 def add_branch_report():
     print("branch report add")
@@ -96,7 +107,7 @@ def add_branch_report():
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
 
-        print(branch,category_id,severity,comments)
+        print(branch, category_id, severity, comments)
 
         # adding to the DB
         lookup = BranchReports(branch, severity, category_id, comments)
@@ -236,7 +247,7 @@ def add_user_():
     name = request.json["name"]
     email_ = request.json["email"]
     branch = request.json["branch"]
-    lookup = User(email_,name,branch)
+    lookup = User(email_, name, branch)
     try:
         db.session.add(lookup)
         db.session.commit()
@@ -253,12 +264,12 @@ def get_branch_users():
     final = list()
     for user in users_:
         branch = Branch.query.get(user["branch"])
-        user.update({"branch":branch_schema.dump(branch)["name"]})
+        user.update({"branch": branch_schema.dump(branch)["name"]})
         final.append(user)
     return jsonify(final)
 
 
-@app.route("/branch/user/remove",methods=["GET","POST"])
+@app.route("/branch/user/remove", methods=["GET", "POST"])
 def remove_user():
     email = request.json["email"]
     data = User.query.filter_by(email=email).first()
@@ -269,7 +280,7 @@ def remove_user():
     return jsonify(user_schema.dump(data))
 
 
-@app.route("/branch/todays/submit",methods=["POST"])
+@app.route("/branch/todays/submit", methods=["POST"])
 def get_lastest_update():
     # get all branches
     branches = Branch.query.all()
@@ -285,11 +296,11 @@ def get_lastest_update():
                                     f"AND brd.date_added "
                                     f"LIKE '%{date}%' "
                                     f"ORDER BY brd.date_added DESC LIMIT 5")
-        final.append({"name":branch.name,"data" :[dict(row) for row in lookup]})
+        final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
     return jsonify(final)
 
 
-@app.route("/branch/todays/submit/single",methods=["POST"])
+@app.route("/branch/todays/submit/single", methods=["POST"])
 def get_lastest_update_():
     branch = request.json["branch"]
     date = datetime.now().strftime("%Y-%m-%d")
@@ -305,17 +316,15 @@ def get_lastest_update_():
     return jsonify([dict(row) for row in lookup])
 
 
-
 @app.route("/send/email/reminder", methods=["POST"])
 def remind():
     return remind_users()
 
 
-@app.route("/has/submitted",methods=["POST"])
+@app.route("/has/submitted", methods=["POST"])
 def sdfsdf():
     user = request.json["user_id"]
     return jsonify({'msg': user_has_submitted(user)})
-
 
 
 @app.route('/email', methods=["POST"])
@@ -330,16 +339,18 @@ def email_2():
     return dict()
 
 
-@app.route("/branch/report",methods=["POST"])
-def branch_reports():
+@app.route("/branch/report", methods=["POST"])
+def branch_reports_():
+    # date
     date = request.json["date"]
     parsed = parser.parse(date)
+
     branches = Branch.query.all()
     date = parsed.strftime("%Y-%m-%d")
     # final dict
     final = list()
     for branch in branches:
-        lookup = db.session.execute(f"SELECT b.*, brd.* "
+        lookup = db.session.execute(f"SELECT b.*, brd.*, ctr.name as Name"
                                     f"FROM branch b "
                                     f"INNER JOIN branch_reports brd "
                                     f"ON b.id = brd.branch "
