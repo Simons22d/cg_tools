@@ -327,3 +327,8 @@ def email_2():
     msg = Message("Tests ....", sender="itsupport@cargen.com", recipients=["denis.kiruku@cargen.com"])
     mail.send(msg)
     return dict()
+
+
+@app.route("/branch/report",methods=["POST"])
+def branch_reports():
+    date = request.json["date"]

@@ -377,3 +377,6 @@ def same_day(date_one, date_two):
 def log(msg):
     print(f"{datetime.now().strftime('%d:%m:%Y %H:%M:%S')} — {msg}")
     return True
+
+
+
