@@ -285,6 +285,7 @@ def get_lastest_update():
     # get all branches
     branches = Branch.query.all()
     date = datetime.now().strftime("%Y-%m-%d")
+    date_ = datetime.now().strftime("%A, %d %b %Y")
     # final dict
     final = list()
     for branch in branches:
@@ -297,13 +298,14 @@ def get_lastest_update():
                                     f"LIKE '%{date}%' "
                                     f"ORDER BY brd.date_added DESC LIMIT 5")
         final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
-    return jsonify(final)
+    return jsonify({"reports": final, "date": date_})
 
 
 @app.route("/branch/todays/submit/single", methods=["POST"])
 def get_lastest_update_():
     branch = request.json["branch"]
     date = datetime.now().strftime("%Y-%m-%d")
+    date_ = datetime.now().strftime("%A, %d %b %Y")
     # sort last per branch
     lookup = db.session.execute(f"SELECT b.*, brd.* "
                                 f"FROM branch b "
@@ -313,7 +315,8 @@ def get_lastest_update_():
                                 f"AND brd.date_added "
                                 f"LIKE '%{date}%' "
                                 f"ORDER BY brd.date_added DESC")
-    return jsonify([dict(row) for row in lookup])
+
+    return jsonify({"data": [dict(row) for row in lookup], "date": date_})
 
 
 @app.route("/send/email/reminder", methods=["POST"])
