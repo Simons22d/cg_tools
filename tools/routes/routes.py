@@ -11,6 +11,7 @@ from tools.utils.utils import send_mail, remind_users, email_info,user_has_submi
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
+from dateutil import parser
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
@@ -332,3 +333,19 @@ def email_2():
 @app.route("/branch/report",methods=["POST"])
 def branch_reports():
     date = request.json["date"]
+    parsed = parser.parse(date)
+    branches = Branch.query.all()
+    date = parsed.strftime("%Y-%m-%d")
+    # final dict
+    final = list()
+    for branch in branches:
+        lookup = db.session.execute(f"SELECT b.*, brd.* "
+                                    f"FROM branch b "
+                                    f"INNER JOIN branch_reports brd "
+                                    f"ON b.id = brd.branch "
+                                    f"AND brd.branch = {branch.id} "
+                                    f"AND brd.date_added "
+                                    f"LIKE '%{date}%' "
+                                    f"ORDER BY brd.date_added DESC LIMIT 5")
+        final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
+    return jsonify(final)
