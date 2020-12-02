@@ -40,7 +40,6 @@ def hello_world():
     start = request.json["start"]
     end = request.json["end"]
     status = request.json["status"]
-    print(start, end, status)
 
     data = get_issue_count(start, end, status)
     today = filename(start, end, status)
@@ -97,7 +96,6 @@ def search_bikes():
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
 def add_branch_report():
-    print("branch report add")
     # get all categories
     categories = Category.query.all()
     branch = request.json["branch"]
@@ -106,8 +104,6 @@ def add_branch_report():
         category_id = int(category.id)
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
-
-        print(branch, category_id, severity, comments)
 
         # adding to the DB
         lookup = BranchReports(branch, severity, category_id, comments)
@@ -232,7 +228,6 @@ def add_user_seed():
         {"email": "kirukuwambui@gmail.com", "name": "Kiruku Wambui", "branch": 1}
     ]
     for user in users:
-        print(user)
         lookup = User(user["email"], user["name"], user["branch"])
         try:
             db.session.add(lookup)
@@ -260,7 +255,6 @@ def add_user_():
 def get_branch_users():
     users = User.query.all()
     users_ = users_schema.dump(users)
-    print(users_)
     final = list()
     for user in users_:
         branch = Branch.query.get(user["branch"])
@@ -273,7 +267,6 @@ def get_branch_users():
 def remove_user():
     email = request.json["email"]
     data = User.query.filter_by(email=email).first()
-    print(data)
     db.session.delete(data)
     db.session.commit()
 
@@ -349,17 +342,31 @@ def branch_reports_():
     parsed = parser.parse(date)
 
     branches = Branch.query.all()
-    date = parsed.strftime("%Y-%m-%d")
-    # final dict
-    final = list()
+    date_ = parsed.strftime("%Y-%m-%d")
+
+    lookup = db.session.execute(f"SELECT br.id, br.comments, b.name "
+                                f"AS Branch, sv.name as Severity, ct.name as Category "
+                                f"FROM branch_reports br "
+                                f"INNER JOIN branch b ON br.branch = b.id "
+                                f"INNER JOIN severity sv ON sv.id = br.severity "
+                                f"INNER JOIN category ct ON ct.id = br.severity "
+                                f"AND br.date_added LIKE '%{date_}%'")
+
+    final = dict()
+    res = [dict(row) for row in lookup]
     for branch in branches:
-        lookup = db.session.execute(f"SELECT b.*, brd.*, ctr.name as Name"
-                                    f"FROM branch b "
-                                    f"INNER JOIN branch_reports brd "
-                                    f"ON b.id = brd.branch "
-                                    f"AND brd.branch = {branch.id} "
-                                    f"AND brd.date_added "
-                                    f"LIKE '%{date}%' "
-                                    f"ORDER BY brd.date_added DESC LIMIT 5")
-        final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
-    return jsonify(final)
+        for r in res:
+            if r["Branch"] == branch.name:
+                final.update({branch.name: res})
+            else:
+                final.update({branch.name: []})
+
+    new_final = dict()
+    for branch in branches:
+        if final[branch.name] :
+            for report_item in final[branch.name]:
+                del(report_item["Branch"])
+                new_final.update({branch.name : report_item})
+        else:
+            new_final.update({branch.name : []})
+    return jsonify(new_final)
