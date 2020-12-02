@@ -296,7 +296,7 @@ def get_lastest_update():
                                     f"AND brd.branch = {branch.id} "
                                     f"AND brd.date_added "
                                     f"LIKE '%{date}%' "
-                                    f"ORDER BY brd.date_added DESC LIMIT 5")
+                                    f"ORDER BY brd.date_added DESC LIMIT 6")
         final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
     return jsonify({"reports": final, "date": date_})
 
