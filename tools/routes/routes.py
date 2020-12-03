@@ -36,23 +36,7 @@ reminder_schema = ReminderSchema()
 reminders_schema = ReminderSchema(many=True)
 
 
-@app.route('/reports', methods=["POST"])
-def hello_world():
-    start = request.json["start"]
-    end = request.json["end"]
-    status = request.json["status"]
-
-    data = get_issue_count(start, end, status)
-    today = filename(start, end, status)
-
-    if data:
-        excel(data, today)
-        return jsonify({"msg": f"{today}.xlsx"})
-    else:
-        return jsonify({"msg": None})
-
-
-@app.route("/reports/download/<string:filename>")
+@app.route("/branch/report/download/<string:filename>")
 def download(filename):
     return send_from_directory("files", filename=filename)
 
@@ -344,7 +328,7 @@ def branch_reports_():
     parsed = parser.parse(date)
     date_ = parsed.strftime("%Y-%m-%d")
     final = dict()
-
+    filename = dict()
     if category == 1000:
 
         sss = dict()
@@ -367,7 +351,8 @@ def branch_reports_():
             sss.update({branch.name.upper(): ccc})
 
         df = pd.DataFrame(sss).T
-        df.to_excel(f"Branch Report all{date_}.xlsx")
+        filename = f"Branch Report all{date_}.xlsx"
+        df.to_excel(filename)
 
     else:
         sss = dict()
@@ -390,6 +375,7 @@ def branch_reports_():
             sss.update({branch.name.upper(): ccc})
 
             df = pd.DataFrame(sss).T
-            df.to_excel(f"Branch Report {branch.name} {date_}.xlsx")
+            filename = f"Branch Report {branch.name} {date_}.xlsx"
+            df.to_excel(filename)
 
-    return final
+    return jsonify({"filename": filename})
