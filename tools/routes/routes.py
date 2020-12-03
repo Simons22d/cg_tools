@@ -12,6 +12,7 @@ from flask_mail import Message
 from tools import mail
 from datetime import datetime
 from dateutil import parser
+import pandas as pd
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
@@ -312,7 +313,7 @@ def get_lastest_update_():
     return jsonify({"data": [dict(row) for row in lookup], "date": date_})
 
 
-@app.route("/send/email/reminder", methods=["POST"])
+@app.route("git", methods=["POST"])
 def remind():
     return remind_users()
 
@@ -337,36 +338,58 @@ def email_2():
 
 @app.route("/branch/report", methods=["POST"])
 def branch_reports_():
-    # date
     date = request.json["date"]
+    category = request.json["category"]
+
     parsed = parser.parse(date)
-
-    branches = Branch.query.all()
     date_ = parsed.strftime("%Y-%m-%d")
-
-    lookup = db.session.execute(f"SELECT br.id, br.comments, b.name "
-                                f"AS Branch, sv.name as Severity, ct.name as Category "
-                                f"FROM branch_reports br "
-                                f"INNER JOIN branch b ON br.branch = b.id "
-                                f"INNER JOIN severity sv ON sv.id = br.severity "
-                                f"INNER JOIN category ct ON ct.id = br.severity "
-                                f"AND br.date_added LIKE '%{date_}%'")
-
     final = dict()
-    res = [dict(row) for row in lookup]
-    for branch in branches:
-        for r in res:
-            if r["Branch"] == branch.name:
-                final.update({branch.name: res})
-            else:
-                final.update({branch.name: []})
 
-    new_final = dict()
-    for branch in branches:
-        if final[branch.name] :
-            for report_item in final[branch.name]:
-                del(report_item["Branch"])
-                new_final.update({branch.name : report_item})
-        else:
-            new_final.update({branch.name : []})
-    return jsonify(new_final)
+    if category == 1000:
+
+        sss = dict()
+        branches = Branch.query.all()
+
+        for branch in branches:
+            data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM "
+                                      f"branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN "
+                                      f"severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id "
+                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%2020-12-02%'")
+            ccc = dict()
+            comnts = ""
+            pro = [dict(x) for x in data]
+            if pro:
+                for x in pro:
+                    ccc.update({x["name"].upper(): x["Severity"]})
+                    comnts += f"{x['name'].upper()} - {x['comments']};   "
+                    ccc.update({"comments".upper(): comnts})
+
+            sss.update({branch.name.upper(): ccc})
+
+        df = pd.DataFrame(sss).T
+        df.to_excel(f"Branch Report all{date_}.xlsx")
+
+    else:
+        sss = dict()
+        branch = Branch.query.get(14)
+
+        if branch:
+            data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM "
+                                      f"branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN "
+                                      f"severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id "
+                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%2020-12-02%'")
+            ccc = dict()
+            comnts = ""
+            pro = [dict(x) for x in data]
+            if pro:
+                for x in pro:
+                    ccc.update({x["name"].upper(): x["Severity"]})
+                    comnts += f"{x['name'].upper()} - {x['comments']};   "
+                    ccc.update({"comments".upper(): comnts})
+
+            sss.update({branch.name.upper(): ccc})
+
+            df = pd.DataFrame(sss).T
+            df.to_excel(f"Branch Report {branch.name} {date_}.xlsx")
+
+    return final

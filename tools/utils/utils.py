@@ -14,6 +14,8 @@ from flask_mail import Message
 from flask import jsonify
 import numpy as np
 import socket
+from dateutil import parser
+
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
 
@@ -102,7 +104,7 @@ def get_issue_count(start, end, status):
 
 def excel(data, filename):
     pd.set_option('display.max_colwidth', 0)
-    return pd.DataFrame(data).to_excel(f"/home/dev/cargen_reports/files/{filename}.xlsx")
+    return pd.DataFrame(data).to_excel(f"/Users/deniswambui/PycharmProjects/tools/{filename}.xlsx")
 
 
 def read_file(filename):
@@ -291,11 +293,11 @@ def remind_users():
     today = datetime.now()
     date = today.strftime("%Y-%m-%d")
     reports_ = [list(row) for row in db.session.execute(f"SELECT DISTINCT branch FROM branch_reports "
-                                                       f"WHERE date_added LIKE '%{date}%'")]
+                                                        f"WHERE date_added LIKE '%{date}%'")]
     reports = [x[0] for x in reports_]
     users = users_list()
-    users_to_email_ = np.setdiff1d(users,reports)
-    print(users,reports)
+    users_to_email_ = np.setdiff1d(users, reports)
+    print(users, reports)
     print(users_to_email_)
     print(">>>>>")
     if users_to_email_.any():
@@ -310,19 +312,20 @@ def remind_users():
             branch = branch_.id
             # send email to usr
             try:
-                email_info(email,"USER",branch,name)
+                email_info(email, "USER", branch, name)
                 log(f"Reminded ---> {user_.email} — {user_.branch} — {branch_.name}")
             except socket.gaierror:
                 log("No Connection")
     return dict()
 
 
-def users_list ():
+def users_list():
     users = User.query.all()
     final = list()
     for user in users:
         final.append(user.branch)
     return final
+
 
 '''
  # if int(report) == int(user.branch):
@@ -341,9 +344,6 @@ def users_list ():
         #
             # # log("has not submitted")
 '''
-
-
-
 
 
 def user_has_submitted(branch_user_in_charge):
@@ -377,6 +377,4 @@ def same_day(date_one, date_two):
 def log(msg):
     print(f"{datetime.now().strftime('%d:%m:%Y %H:%M:%S')} — {msg}")
     return True
-
-
 
