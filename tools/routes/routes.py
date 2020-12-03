@@ -352,7 +352,7 @@ def branch_reports_():
 
         df = pd.DataFrame(sss).T
         filename = f"Branch Report all{date_}.xlsx"
-        df.to_excel(filename)
+        df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     else:
         sss = dict()
@@ -376,6 +376,6 @@ def branch_reports_():
 
             df = pd.DataFrame(sss).T
             filename = f"Branch Report {branch.name} {date_}.xlsx"
-            df.to_excel(filename)
+            df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     return jsonify({"filename": filename})
