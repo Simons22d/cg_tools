@@ -338,7 +338,7 @@ def branch_reports_():
             data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM "
                                       f"branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN "
                                       f"severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id "
-                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%2020-12-02%'")
+                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
@@ -362,7 +362,7 @@ def branch_reports_():
             data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM "
                                       f"branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN "
                                       f"severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id "
-                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%2020-12-02%'")
+                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
