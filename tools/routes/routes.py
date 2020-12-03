@@ -313,7 +313,7 @@ def get_lastest_update_():
     return jsonify({"data": [dict(row) for row in lookup], "date": date_})
 
 
-@app.route("/remind/users", methods=["POST"])
+@app.route("/send/email/reminder", methods=["POST"])
 def remind():
     return remind_users()
 
