@@ -324,13 +324,14 @@ def email_2():
 def branch_reports_():
     date = request.json["date"]
     category = request.json["category"]
+    print(date,category)
 
     parsed = parser.parse(date)
     date_ = parsed.strftime("%Y-%m-%d")
     final = dict()
     filename = dict()
-    if category == 1000:
-
+    if int(category) == 1000:
+        print("MMMMM")
         sss = dict()
         branches = Branch.query.all()
 
@@ -341,41 +342,42 @@ def branch_reports_():
                                       f"AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
-            pro = [dict(x) for x in data]
-            if pro:
+            if data:
+                pro = [dict(x) for x in data]
+
                 for x in pro:
+                    print(x)
                     ccc.update({x["name"].upper(): x["Severity"]})
                     comnts += f"{x['name'].upper()} - {x['comments']};   "
                     ccc.update({"comments".upper(): comnts})
 
             sss.update({branch.name.upper(): ccc})
-
+        print(sss)
         df = pd.DataFrame(sss).T
         filename = f"Branch Report all{date_}.xlsx"
-        df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
+        df.to_excel(f"/Users/deniswambui/PycharmProjects/tools/tools/files/{filename}")
 
     else:
-        sss = dict()
-        branch = Branch.query.get(14)
 
+        sss = dict()
+        branch = Branch.query.get(int(category))
         if branch:
-            data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM "
-                                      f"branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN "
-                                      f"severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id "
-                                      f"AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
+            data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
+            print(pro)
             if pro:
                 for x in pro:
+                    print(x)
                     ccc.update({x["name"].upper(): x["Severity"]})
                     comnts += f"{x['name'].upper()} - {x['comments']};   "
                     ccc.update({"comments".upper(): comnts})
 
             sss.update({branch.name.upper(): ccc})
-
+            print(sss)
             df = pd.DataFrame(sss).T
             filename = f"Branch Report {branch.name} {date_}.xlsx"
-            df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
+            df.to_excel(f"/Users/deniswambui/PycharmProjects/tools/tools/files/{filename}")
 
     return jsonify({"filename": filename})
