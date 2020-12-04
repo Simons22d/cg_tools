@@ -104,7 +104,7 @@ def get_issue_count(start, end, status):
 
 def excel(data, filename):
     pd.set_option('display.max_colwidth', 0)
-    return pd.DataFrame(data).to_excel(f"/Users/deniswambui/PycharmProjects/tools/{filename}.xlsx")
+    return pd.DataFrame(data).to_excel(f"/home/dev/cg_tools/tools/files/{filename}.xlsx")
 
 
 def read_file(filename):

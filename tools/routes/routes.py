@@ -89,11 +89,16 @@ def add_branch_report():
         category_id = int(category.id)
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
+        if comments.strip():
 
-        # adding to the DB
-        lookup = BranchReports(branch, severity, category_id, comments)
-        db.session.add(lookup)
-        db.session.commit()
+
+            # adding to the DB
+            lookup = BranchReports(branch, severity, category_id, comments)
+            db.session.add(lookup)
+            db.session.commit()
+            data = data
+        else:
+            data = {}
 
     return jsonify(data)
 
@@ -354,8 +359,8 @@ def branch_reports_():
             sss.update({branch.name.upper(): ccc})
         print(sss)
         df = pd.DataFrame(sss).T
-        filename = f"Branch Report all{date_}.xlsx"
-        df.to_excel(f"/Users/deniswambui/PycharmProjects/tools/tools/files/{filename}")
+        filename = f"Branch Report all {date_}.xlsx"
+        df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     else:
 
@@ -378,6 +383,6 @@ def branch_reports_():
             print(sss)
             df = pd.DataFrame(sss).T
             filename = f"Branch Report {branch.name} {date_}.xlsx"
-            df.to_excel(f"/Users/deniswambui/PycharmProjects/tools/tools/files/{filename}")
+            df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     return jsonify({"filename": filename})
