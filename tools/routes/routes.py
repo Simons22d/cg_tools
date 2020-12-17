@@ -7,7 +7,8 @@ from flask_sqlalchemy import sqlalchemy
 from tools.models.models import Bike, BranchReports, Category, CategorySchema, BikeSchema, BranchReportsSchema, \
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
-from tools.utils.utils import send_mail, remind_users, email_info, user_has_submitted
+from tools.utils.utils import (send_mail, remind_users, email_info, user_has_submitted, get_by_type_branch,
+                               get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value)
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -90,7 +91,6 @@ def add_branch_report():
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
         if comments.strip():
-
 
             # adding to the DB
             lookup = BranchReports(branch, severity, category_id, comments)
@@ -329,14 +329,13 @@ def email_2():
 def branch_reports_():
     date = request.json["date"]
     category = request.json["category"]
-    print(date,category)
+    print(date, category)
 
     parsed = parser.parse(date)
     date_ = parsed.strftime("%Y-%m-%d")
     final = dict()
     filename = dict()
     if int(category) == 1000:
-        print("MMMMM")
         sss = dict()
         branches = Branch.query.all()
 
@@ -367,7 +366,8 @@ def branch_reports_():
         sss = dict()
         branch = Branch.query.get(int(category))
         if branch:
-            data = db.session.execute(f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
+            data = db.session.execute(
+                f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
@@ -386,3 +386,36 @@ def branch_reports_():
             df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     return jsonify({"filename": filename})
+
+
+@app.route("/dashboard")
+def dashboard():
+    pass
+
+
+@app.route("/branch/by/type", methods=['POST'])
+def __xx():
+    type = request.json["type"]
+    branch = request.json["branch"]
+    return jsonify(branches_cat_schema.dump(get_by_type_branch(type, branch)))
+
+
+@app.route("/all/most/status", methods=["POST"])
+def most_failed_all():
+    date = request.json["date"]
+    duration = request.json["duration"]  # daily,weekly,monthly,yearly
+    status = request.json["status"]
+    data = get_status_by_category_and_duration(date, duration, status)
+    return jsonify({"data": data, "maximum": maximum_value(data)})
+
+
+@app.route("/branch/most/status", methods=["POST"])
+def most_failed_branch():
+    date = request.json["date"]
+    branch = request.json["branch"]
+    duration = request.json["duration"]  # daily,weekly,monthly,yearly
+    status = request.json["status"]
+    # maximum_value
+    data = get_status_by_category_and_branch(branch, date, duration, status)
+
+    return jsonify({"data": data, "maximum": maximum_value(data)})

@@ -55,12 +55,12 @@ class BranchReports(db.Model):
 
 class BranchReportsSchema(ma.Schema):
     class Meta:
-        fields = ("id", "severity", "category", "comments", "date_added")
+        fields = ("id", "branch", "severity", "category", "comments", "date_added")
 
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=True,)
+    name = db.Column(db.String(255), nullable=True, )
 
     def __init__(self, name):
         self.name = name
@@ -72,7 +72,7 @@ class CategorySchema(ma.Schema):
 
 
 class Branch(db.Model):
-    id = db.Column(db.Integer, primary_key=True,unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
 
     def __init__(self, name):
@@ -97,7 +97,7 @@ class Reminder(db.Model):
 
 class ReminderSchema(ma.Schema):
     class Meta:
-        fields = ("id", "user", "notified","date_added")
+        fields = ("id", "user", "notified", "date_added")
 
 
 class User(db.Model):

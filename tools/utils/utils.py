@@ -1,20 +1,17 @@
-from os.path import isfile
 from tools import db
-from bs4 import BeautifulSoup
-import pandas as pd
-from datetime import datetime
-import smtplib, ssl, imaplib
-from os.path import isfile
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import requests
-from tools.models.models import Reminder, User, Branch, BranchReports
-from tools import mail
-from flask_mail import Message
-from flask import jsonify
-import numpy as np
+import smtplib
 import socket
-from dateutil import parser
+from datetime import datetime
+from os.path import isfile
+
+import numpy as np
+import pandas as pd
+from bs4 import BeautifulSoup
+from flask_mail import Message
+
+from tools import db
+from tools import mail
+from tools.models.models import User, Branch, BranchReports
 
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
@@ -299,7 +296,6 @@ def remind_users():
     users_to_email_ = np.setdiff1d(users, reports)
     print(users, reports)
     print(users_to_email_)
-    print(">>>>>")
     if users_to_email_.any():
         for user in users_to_email_:
             # get user
@@ -378,3 +374,299 @@ def log(msg):
     print(f"{datetime.now().strftime('%d:%m:%Y %H:%M:%S')} — {msg}")
     return True
 
+
+def get_by_duration(start, end):
+    # BranchReports.date_added.between(datetime.now() + timedelta(days=-2),datetime.now())
+    return BranchReports.query.filter(start, end).all()
+
+
+"""
+here we need to use the date as for filter with data weekly context
+"""
+
+
+def get_by_type_branch(type, branch):
+    return BranchReports.query.filter(BranchReports.category.contains(type)).filter_by(branch=
+        branch).all()
+
+
+"""
+Daily filter needed
+"""
+
+def to_list(ResultProxy):
+    return [x for x in ResultProxy]
+
+def get_daily_branch(branch,date):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND day(date_added) = day("
+                              f"'{date}')")
+
+
+"""
+Weekly filter needed
+"""
+
+
+def get_weekly_branch(branch,date):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND week(date_added) = week("
+                              f"'{date}')")
+
+
+
+"""
+Monthly filter needed
+"""
+
+
+def get_monthly_branch(branch):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND month(date_added) = month("
+                              f"'{date}')")
+
+
+"""
+Yearly filter needed
+"""
+
+
+def get_yearly_branch(branch):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND year(date_added) = year("
+                              f"'{date}')")
+
+
+
+"""
+get daily report branch -> by type 
+"""
+
+
+
+"""
+Daily filter TYPE needed
+"""
+
+
+def get_daily_branch(branch,date,type):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND day(date_added) = day("
+                              f"'{date} AND category = {type}')")
+
+
+"""
+Weekly filter TYPE needed
+"""
+
+
+def get_weekly_branch(branch,date,type):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND week(date_added) = week("
+                              f"'{date}') AND category = {type}")
+
+
+
+"""
+Monthly filter TYPE needed
+"""
+
+
+def get_monthly_branch(branch,type):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND month(date_added) = month("
+                              f"'{date} AND category = {type}')")
+
+
+"""
+Yearly filter TYPE needed
+"""
+
+
+def get_yearly_branch(branch,type):
+    return db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND year(date_added) = year('"
+                              f"{date}') AND category = {type}'")
+
+
+
+
+
+"""
+working with -> severity
+"""
+
+"""
+Daily filter TYPE needed
+"""
+
+def get_daily_branch(branch, date, severity):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND day(date_added) = day("
+                              f"'{date} AND severity = {severity}')"))
+
+"""
+Weekly filter TYPE needed
+"""
+
+def get_weekly_branch(branch, date, severity):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND week(date_added) = week("
+                              f"'{date}') AND severity = {severity}"))
+
+"""
+Monthly filter TYPE needed
+"""
+
+def get_monthly_branch(branch, date, severity):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND month(date_added) = month('{date}')"
+                              f" AND severity = {severity}"))
+
+"""
+Yearly filter TYPE needed
+"""
+
+def get_yearly_branch(branch, date, severity):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND year(date_added) = year('"
+                              f"{date}') AND severity = {severity}"))
+
+
+
+"""
+SEVERITY and CATEGORY for branch
+"""
+
+def get_daily_branch(branch, date, severity, category):
+    query = f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND day(date_added) = day('{date}') AND severity = {severity} AND category= {category}"
+    print(query)
+    return to_list(db.session.execute(query))
+
+"""
+Weekly filter TYPE needed
+"""
+
+def get_weekly_branch(branch, date, severity,category):
+    query = f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND week(date_added) = week('{date}') AND severity = {severity} AND category= {category}"
+    print(query)
+    return to_list(db.session.execute(query))
+
+"""
+Monthly filter TYPE needed
+"""
+
+def get_monthly_branch(branch, date, severity,category):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND month(date_added) = month("
+                              f"'{date} AND severity = {severity}') AND category= {category}"))
+
+"""
+Yearly filter TYPE needed
+"""
+
+def get_yearly_branch(branch, date, severity,category):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND year(date_added) = "
+                                      f"year('{date}') AND severity = {severity}  AND category= {category}"))
+
+
+
+"""
+SEVERITY and CATEGORY RANDOM WITH TIME
+"""
+
+def get_daily_with_category_and_severity(date, severity, category):
+    return to_list(db.session.execute(f"SELECT * FROM  branch_reports WHERE day(date_added) = day('{date}') AND severity = "
+                              f"{severity} AND category= {category}"))
+
+"""
+Weekly filter TYPE needed
+"""
+
+def get_weekly_with_category_and_severity(date, severity, category):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE week(date_added) = week('{date}') AND severity ="
+                              f" {severity} AND category = {category}"))
+
+"""
+Monthly filter TYPE needed
+"""
+
+def get_monthly_with_category_and_severity(date, severity,category):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE month(date_added) = month('{date}') and severity = "
+                              f"{severity} AND category = {category}"))
+
+"""
+Yearly filter TYPE needed
+"""
+
+def get_yearly_with_category_and_severity(date, severity,category):
+    return to_list(db.session.execute(f"SELECT  * FROM  branch_reports WHERE year(date_added) = year('{date}') and severity = "
+                              f"{severity} AND category = {category}"))
+
+"""
+MOST FAILED WEEEKLY IS GOING TO BE: 
+1. get the category 'daily,weekly, monthly, yearly'
+2. get the count for each of the category
+3. get the highest count
+"""
+
+
+"""
+Here we need the most failed entity
+>> we need to group by to get the most failed branch
+"""
+
+duration_mapper_no_branch = {
+    "daily" : get_daily_with_category_and_severity,
+    "weekly" : get_weekly_with_category_and_severity,
+    "monthly" : get_monthly_with_category_and_severity,
+    "yearly" : get_yearly_with_category_and_severity
+}
+
+duration_mapper_with_branch = {
+    "daily" : get_daily_branch,
+    "weekly" : get_weekly_branch,
+    "monthly" : get_monthly_branch,
+    "yearly" : get_yearly_branch
+}
+
+categories,names =[x[0] for x in db.session.execute("SELECT id FROM category order by id asc;")],[x[0] for x in
+                                                                                                  db.session.execute(
+                                                                                                      "SELECT name "
+                                                                                                      "FROM category order by id asc;")]
+
+def get_status_by_category_and_duration(date, duration,status):
+    """
+    1. get all data for the category
+    2. compare and return the largest
+    :return int
+    """
+    results = dict()
+    try:
+        # get the category needed
+        func  = duration_mapper_no_branch[duration]
+        for index,category in enumerate(categories):
+            items = func(date,status,category)
+            results.update({names[index] : items.__len__()})
+    except KeyError:
+        results
+    return results
+
+
+
+def get_status_by_category_and_branch(branch, date, duration, status):
+    """
+    1. get all data for the category
+    2. compare and return the largest
+    :return int
+    """
+    results = dict()
+    try:
+        # get the category needed
+        func = duration_mapper_with_branch[duration]
+        for index,category in enumerate(categories):
+            items = func(branch,date,status,category)
+            # print(items)
+            results.update({names[index] : items.__len__()})
+    except KeyError:
+        results
+    return results
+
+
+def get_type_by_branch(duration, type):
+    return BranchReports.query.filter_by(branch=branch).filter_by(category=type).all()
+
+
+
+def maximum_value(dict):
+    try:
+        return max(dict, key=dict.get)
+    except ValueError :
+        return "error"
