@@ -13,6 +13,8 @@ from tools import db
 from tools import mail
 from tools.models.models import User, Branch, BranchReports
 
+from dotmap import DotMap
+
 # in to str mapper
 status_mapper = ["New", "Assigned", "Resolved", "Closed", "Escalated", "All"]
 
@@ -685,8 +687,17 @@ def get_graph_data_per_duration_branch(category,date,branch):
 
 
 def bootstrap_test():
-    data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, br.date_added FROM branch_reports br INNER JOIN branch b ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id WHERE week(br.date_added) = week('2020-12-18 08:35:39');")
-    return format(data)
+    data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, "
+                              f"br.date_added, br.category as cat FROM branch_reports br INNER JOIN branch b ON "
+                              f"b.id = br.branch INNER JOIN "
+                              f"category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id WHERE "
+                              f"week(br.date_added) = week('2020-12-18 08:35:39');")
+    summary = dict()
+    data = format(data)
+    for item in data:
+        item_ = DotMap(item)
+    return data
+
 
 def format(data):
     return [dict(x) for x in data]
