@@ -704,14 +704,13 @@ def bootstrap_test():
     final = dict()
     for branch in branches:
         for category in categories:
-            data = db.session.execute(f"SELECT ct.name as category, sv.name as severity_ref, "
-                                        f"sv.id as severity "
-                                        f"br.comments, br.date_added FROM branch_reports br INNER JOIN branch b "
+            data = db.session.execute(f"SELECT ct.name as category, sv.id as sev_id,sv.name as severity "
+                                        f"FROM branch_reports br INNER JOIN branch b "
                                         f"ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN "
                                         f"severity sv ON br.severity = sv.id WHERE week(br.date_added) = "
                                         f"week('2020-12-17 08:35:39') AND br.category = ct.id and ct.id= {category} and "
                                         f"b.id = {branch};")
-            final.update({branch_names[branch]:format_dict(data)})
+            final.update({branch_names[branch-1]:format_dict(data)})
     # summary = dict()
     # data = format(data)
     # for item in data:
