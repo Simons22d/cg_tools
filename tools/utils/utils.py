@@ -664,9 +664,30 @@ def get_type_by_branch(duration, type):
     return BranchReports.query.filter_by(branch=branch).filter_by(category=type).all()
 
 
-
 def maximum_value(dict):
     try:
         return max(dict, key=dict.get)
     except ValueError :
         return "error"
+
+
+def get_graph_data_per_duration_all(category,date):
+    query = f"SELECT * FROM branch_reports WHERE {category.lower()}(date_added) = {category.lower()}({date}) ORDER BY date_added DESC"
+    data = db.session.execute(query)
+    return format(data)
+
+
+def get_graph_data_per_duration_branch(category,date,branch):
+    query = f"SELECT * FROM branch_reports WHERE {category.lower()}(date_added) = {category.lower()}({date}) AND " \
+            f"branch = {branch} ORDER BY date_added DESC"
+    data = db.session.execute(query)
+    return format(data)
+
+
+def bootstrap_test():
+    data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, br.date_added FROM branch_reports br INNER JOIN branch b ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id WHERE week(br.date_added) = week('2020-12-18 08:35:39');")
+    return format(data)
+
+def format(data):
+    return [dict(x) for x in data]
+

@@ -8,7 +8,8 @@ from tools.models.models import Bike, BranchReports, Category, CategorySchema, B
     Branch, BranchSchema, Severity, SeveritySchema, User, UserSchema, Reminder, ReminderSchema
 
 from tools.utils.utils import (send_mail, remind_users, email_info, user_has_submitted, get_by_type_branch,
-                               get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value)
+                               get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value,
+                               bootstrap_test)
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -419,3 +420,7 @@ def most_failed_branch():
     data = get_status_by_category_and_branch(branch, date, duration, status)
 
     return jsonify({"data": data, "maximum": maximum_value(data)})
+
+@app.route("/bootstrap",methods=["POST"])
+def bootstrapper():
+    return bootstrap_test()
