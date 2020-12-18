@@ -624,6 +624,11 @@ categories,names =[x[0] for x in db.session.execute("SELECT id FROM category ord
                                                                                                       "SELECT name "
                                                                                                       "FROM category order by id asc;")]
 
+branches,branch_names =[x[0] for x in db.session.execute("SELECT id FROM branch order by id asc;")],[x[0] for x in
+                                                                                                  db.session.execute(
+                                                                                                      "SELECT name "
+                                                                                                      "FROM branch "
+                                                                                                      "order by id asc;")]
 def get_status_by_category_and_duration(date, duration,status):
     """
     1. get all data for the category
@@ -676,29 +681,46 @@ def maximum_value(dict):
 def get_graph_data_per_duration_all(category,date):
     query = f"SELECT * FROM branch_reports WHERE {category.lower()}(date_added) = {category.lower()}({date}) ORDER BY date_added DESC"
     data = db.session.execute(query)
-    return format(data)
+    return format_dict(data)
 
 
 def get_graph_data_per_duration_branch(category,date,branch):
     query = f"SELECT * FROM branch_reports WHERE {category.lower()}(date_added) = {category.lower()}({date}) AND " \
             f"branch = {branch} ORDER BY date_added DESC"
     data = db.session.execute(query)
-    return format(data)
+    return format_dict(data)
 
 
 def bootstrap_test():
-    data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, "
-                              f"br.date_added, br.category as cat FROM branch_reports br INNER JOIN branch b ON "
-                              f"b.id = br.branch INNER JOIN "
-                              f"category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id WHERE "
-                              f"week(br.date_added) = week('2020-12-18 08:35:39');")
-    summary = dict()
-    data = format(data)
-    for item in data:
-        item_ = DotMap(item)
-    return data
+    # data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, "
+    #                           f"br.date_added FROM branch_reports br INNER JOIN branch b ON b.id = br.branch "
+    #                           f"INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = "
+    #                           f"sv.id WHERE week(br.date_added) = week('2020-12-18 08:35:39') AND br.category = ct.id "
+    #                           f"AND b.id= 7 AND sv.id = 2;")
 
 
-def format(data):
+    # get branches
+    # get cateories
+    final = dict()
+    for branch in branches:
+        for category in categories:
+            data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, "
+                                        f"br.comments, br.date_added FROM branch_reports br INNER JOIN branch b "
+                                        f"ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN "
+                                        f"severity sv ON br.severity = sv.id WHERE week(br.date_added) = "
+                                        f"week('2020-12-17 08:35:39') AND br.category = ct.id and ct.id= {category} and "
+                                        f"b.id = {branch};")
+            final.update({branch:format_dict(data)})
+    # summary = dict()
+    # data = format(data)
+    # for item in data:
+    #     item_ = DotMap(item)
+    return final
+
+
+def format_dict(data):
     return [dict(x) for x in data]
+
+def format_list(data):
+    return [list(x) for x in data]
 
