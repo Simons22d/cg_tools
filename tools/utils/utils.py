@@ -619,8 +619,8 @@ duration_mapper_with_branch = {
     "yearly" : get_yearly_branch
 }
 
-categories,names =[x[0] for x in db.session.execute("SELECT id FROM category order by id asc;")],[x[0] for x in
-                                                                                                  db.session.execute(
+categories, category_names = [x[0] for x in db.session.execute("SELECT id FROM category order by id asc;")], [x[0] for x in
+                                                                                                              db.session.execute(
                                                                                                       "SELECT name "
                                                                                                       "FROM category order by id asc;")]
 
@@ -641,7 +641,7 @@ def get_status_by_category_and_duration(date, duration,status):
         func  = duration_mapper_no_branch[duration]
         for index,category in enumerate(categories):
             items = func(date,status,category)
-            results.update({names[index] : items.__len__()})
+            results.update({category_names[index] : items.__len__()})
     except KeyError:
         results
     return results
@@ -661,7 +661,7 @@ def get_status_by_category_and_branch(branch, date, duration, status):
         for index,category in enumerate(categories):
             items = func(branch,date,status,category)
             # print(items)
-            results.update({names[index] : items.__len__()})
+            results.update({category_names[index] : items.__len__()})
     except KeyError:
         results
     return results
@@ -704,13 +704,18 @@ def bootstrap_test():
     final = dict()
     for branch in branches:
         for category in categories:
-            data = db.session.execute(f"SELECT ct.name as category, sv.id as sev_id,sv.name as severity "
+            data = db.session.execute(f"SELECT ct.name as category, sv.id as sev_id,sv.name as severity,"
+                                      f" b.name as branch_name "
                                         f"FROM branch_reports br INNER JOIN branch b "
                                         f"ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN "
                                         f"severity sv ON br.severity = sv.id WHERE week(br.date_added) = "
                                         f"week('2020-12-17 08:35:39') AND br.category = ct.id and ct.id= {category} and "
                                         f"b.id = {branch};")
-            final.update({branch_names[branch-1]:format_dict(data)})
+            # final.update({branch_names[branch-1]:format_dict(data)})
+            format_(data)
+
+        # remaping data
+
     # summary = dict()
     # data = format(data)
     # for item in data:
@@ -720,6 +725,12 @@ def bootstrap_test():
 
 def format_dict(data):
     return [dict(x) for x in data]
+
+
+def format_(data):
+    for x in data:
+        print(x)
+
 
 def format_list(data):
     return [list(x) for x in data]
