@@ -690,6 +690,8 @@ def get_graph_data_per_duration_branch(category,date,branch):
     data = db.session.execute(query)
     return format_dict(data)
 
+category_map ={x:0 for x in category_names}
+
 
 def bootstrap_test():
     # data = db.session.execute(f"SELECT ct.name as category, b.name as branch_name, sv.name as severity, br.comments, "
@@ -704,8 +706,7 @@ def bootstrap_test():
     final = dict()
     for branch in branches:
         for category in categories:
-            data = db.session.execute(f"SELECT ct.name as category, sv.id as sev_id,sv.name as severity,"
-                                      f" b.name as branch_name "
+            data = db.session.execute(f"SELECT ct.name as category, sv.name as severity, b.name as branch_name "
                                         f"FROM branch_reports br INNER JOIN branch b "
                                         f"ON b.id = br.branch INNER JOIN category ct ON br.category = ct.id INNER JOIN "
                                         f"severity sv ON br.severity = sv.id WHERE week(br.date_added) = "
@@ -713,6 +714,8 @@ def bootstrap_test():
                                         f"b.id = {branch};")
             # final.update({branch_names[branch-1]:format_dict(data)})
             format_(data)
+
+    print(category_map)
 
         # remaping data
 
@@ -729,7 +732,13 @@ def format_dict(data):
 
 def format_(data):
     for x in data:
-        print(x)
+        # print(x)
+        for category in category_names:
+            if str(x[0]) == str(category):
+                print( str(category))
+                current_value = category_map[category]
+                current_value = current_value + 1
+                category_map[category] = current_value
 
 
 def format_list(data):
