@@ -421,6 +421,7 @@ def most_failed_branch():
 
     return jsonify({"data": data, "maximum": maximum_value(data)})
 
+
 @app.route("/bootstrap",methods=["POST"])
 def bootstrapper():
-    return bootstrap_test()
+    return jsonify(bootstrap_test())
