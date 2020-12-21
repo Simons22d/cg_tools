@@ -405,7 +405,7 @@ def __xx():
 def most_failed_all():
     date = request.json["date"]
     duration = request.json["duration"]  # daily,weekly,monthly,yearly
-    status = request.json["status"]
+    status = request.json["status"]  # {1: ok, 2: slow, 3: Not Functional }
     data = get_status_by_category_and_duration(date, duration, status)
     return jsonify({"data": data, "maximum": maximum_value(data)})
 
