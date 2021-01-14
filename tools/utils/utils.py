@@ -182,7 +182,7 @@ def email_info(_to, kind, branch, user=""):
                    <p>
                        Dear {user},<br><br>
                        
-                       Please Follow the link prodived below to .<br>
+                       Please Follow the link provided below.<br>
                        <br>
                        Kindly fill the {branch_.name} Branch report for {date}.
 
