@@ -146,8 +146,9 @@ def send_mail(_to, subject, body):
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
     try:
         mail.send(msg)
-    except smtplib.SMTPRecipientsRefused:
+    except smtplib.SMTPRecipientsRefused as e:
         log("email could not email user")
+        log(e)
     return dict()
 
 
@@ -309,10 +310,12 @@ def remind_users():
             email = user_.email
             branch = branch_.id
             # send email to usr
+            log(f"FAILED ---> {user_.email} — {user_.branch} — {branch_.name}")
             try:
                 email_info(email, "USER", branch, name)
                 log(f"Reminded ---> {user_.email} — {user_.branch} — {branch_.name}")
-            except socket.gaierror:
+            except socket.gaierror as e:
+                log(f"FAILED ---> {user_.email} — {user_.branch} — {branch_.name}")
                 log("No Connection")
     return dict()
 
@@ -568,6 +571,8 @@ def get_daily_with_category_and_severity(date, severity, category):
     return to_list(db.session.execute(f"SELECT * FROM  branch_reports WHERE day(date_added) = day('{date}') AND severity = "
                               f"{severity} AND category= {category}"))
 
+
+# SELECT * FROM  branch_reports WHERE day(date_added) = day('2020-12-21 05:53:12') AND severity = 1 AND category= 1
 """
 Weekly filter TYPE needed
 """
