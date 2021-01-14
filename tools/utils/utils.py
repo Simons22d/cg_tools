@@ -310,7 +310,6 @@ def remind_users():
             email = user_.email
             branch = branch_.id
             # send email to usr
-            log(f"FAILED ---> {user_.email} — {user_.branch} — {branch_.name}")
             try:
                 email_info(email, "USER", branch, name)
                 log(f"Reminded ---> {user_.email} — {user_.branch} — {branch_.name}")
