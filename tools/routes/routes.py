@@ -357,9 +357,7 @@ def branch_reports_():
                     ccc.update({"comments".upper(): comnts})
 
             sss.update({branch.name.upper(): ccc})
-        print(sss)
         df = pd.DataFrame(sss).T
-        filename = f"Branch Report all {date_}.xlsx"
         df.to_excel(f"/home/dev/cg_tools/tools/files/{filename}")
 
     else:
