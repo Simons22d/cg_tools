@@ -9,7 +9,7 @@ from tools.models.models import Bike, BranchReports, Category, CategorySchema, B
 
 from tools.utils.utils import (send_mail, remind_users, email_info, user_has_submitted, get_by_type_branch,
                                get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value,
-                               bootstrap_test)
+                               bootstrap_test,daily_report_data)
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -266,23 +266,8 @@ def remove_user():
 
 @app.route("/branch/todays/submit", methods=["POST"])
 def get_lastest_update():
-    # get all branches
-    branches = Branch.query.all()
-    date = datetime.now().strftime("%Y-%m-%d")
-    date_ = datetime.now().strftime("%A, %d %b %Y")
-    # final dict
-    final = list()
-    for branch in branches:
-        lookup = db.session.execute(f"SELECT b.*, brd.* "
-                                    f"FROM branch b "
-                                    f"INNER JOIN branch_reports brd "
-                                    f"ON b.id = brd.branch "
-                                    f"AND brd.branch = {branch.id} "
-                                    f"AND brd.date_added "
-                                    f"LIKE '%{date}%' "
-                                    f"ORDER BY brd.date_added DESC LIMIT 6")
-        final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
-    return jsonify({"reports": final, "date": date_})
+    data = daily_report_data()
+    return jsonify()
 
 
 @app.route("/branch/todays/submit/single", methods=["POST"])

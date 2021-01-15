@@ -683,6 +683,27 @@ def users_list():
     return final
 
 
+def daily_report_data():
+    # get all branches
+    branches = Branch.query.all()
+    date = datetime.now().strftime("%Y-%m-%d")
+    date_ = datetime.now().strftime("%A, %d %b %Y")
+    # final dict
+    final = list()
+    for branch in branches:
+        lookup = db.session.execute(f"SELECT b.*, brd.* "
+                                    f"FROM branch b "
+                                    f"INNER JOIN branch_reports brd "
+                                    f"ON b.id = brd.branch "
+                                    f"AND brd.branch = {branch.id} "
+                                    f"AND brd.date_added "
+                                    f"LIKE '%{date}%' "
+                                    f"ORDER BY brd.date_added DESC LIMIT 6")
+        final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
+        res = {"reports": final, "date": date_}
+        return res
+
+
 def email_report_body(report_body):
     #  here we are going add the logo
     logo  = ""
@@ -691,6 +712,7 @@ def email_report_body(report_body):
 
     # data looping
     final = str()
+    data =
     for item in data:
         final += """
                 <tr valign="top">
@@ -741,7 +763,7 @@ def email_report_body(report_body):
             <tr>
               <td class="header--marketing">
                 <div align="left" style="text-align: left">
-                  <a href="http://www.primeclerk.com"><img id="customHeaderImage" label="Header Image" editable="true" border="0" align="top" style="display: inline"></a>
+                  <a href=""><img id="customHeaderImage" label="Header Image" editable="true" border="0" align="top" style="display: inline"></a>
                 </div>
               </td>
             </tr>
