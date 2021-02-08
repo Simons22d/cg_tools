@@ -690,7 +690,6 @@ def daily_report_data():
     date_ = datetime.now().strftime("%A, %d %b %Y")
     # final dict
     final = list()
-    print(branches)
     for branch in branches:
         lookup = db.session.execute(f"SELECT b.*, brd.* "
                                     f"FROM branch b "
@@ -701,13 +700,11 @@ def daily_report_data():
                                     f"LIKE '%{date}%' "
                                     f"ORDER BY brd.date_added DESC LIMIT 6")
         lookup = [dict(row) for row in lookup]
-        print(branch.name)
-        print("CCC",lookup)
         final.append({"name": branch.name, "data": lookup})
 
-        print(final)
-        res = {"reports": final, "date": date_}
-        return res
+    print(final)
+    res = {"reports": final, "date": date_}
+    return res
 
 
 def email_report_body():
