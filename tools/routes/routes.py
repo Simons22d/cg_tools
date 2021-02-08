@@ -269,7 +269,6 @@ def remove_user():
     data = User.query.filter_by(email=email).first()
     db.session.delete(data)
     db.session.commit()
-
     return jsonify(user_schema.dump(data))
 
 
