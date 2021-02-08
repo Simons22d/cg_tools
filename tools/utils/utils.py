@@ -701,7 +701,8 @@ def daily_report_data():
                                     f"LIKE '%{date}%' "
                                     f"ORDER BY brd.date_added DESC LIMIT 6")
         lookup = [dict(row) for row in lookup]
-        print(lookup)
+        print(branch.name)
+        print("CCC",lookup)
         final.append({"name": branch.name, "data": lookup})
 
         print(final)
