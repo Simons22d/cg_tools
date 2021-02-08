@@ -329,7 +329,7 @@ def branch_reports_():
     parsed = parser.parse(date)
     date_ = parsed.strftime("%Y-%m-%d")
     final = dict()
-    filename = dict()
+    filename = "branch_reports.xlsx"
     if int(category) == 1000:
         sss = dict()
         branches = Branch.query.all()
