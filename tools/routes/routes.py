@@ -9,7 +9,7 @@ from tools.models.models import Bike, BranchReports, Category, CategorySchema, B
 
 from tools.utils.utils import (send_mail, remind_users, email_info, user_has_submitted, get_by_type_branch,
                                get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value,
-                               bootstrap_test,daily_report_data)
+                               bootstrap_test, daily_report_data, email_report_body)
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -212,6 +212,15 @@ def send_email_():
     return send_mail(from_, to, subject, body)
 
 
+@app.route("/send/email/template", methods=['POST', 'GET'])
+def send_email_template():
+    from_ = "itsupport@cargen.com"
+    to = "denniskiruku@gmail.com"
+    subject = "TEMPLATE EMAIL"
+    body = email_report_body()
+    return send_mail(from_, to, subject, body)
+
+
 @app.route('/user/seed', methods=["POST"])
 def add_user_seed():
     users = [
@@ -267,7 +276,7 @@ def remove_user():
 @app.route("/branch/todays/submit", methods=["POST"])
 def get_lastest_update():
     data = daily_report_data()
-    return jsonify()
+    return jsonify(data)
 
 
 @app.route("/branch/todays/submit/single", methods=["POST"])
@@ -351,7 +360,9 @@ def branch_reports_():
         branch = Branch.query.get(int(category))
         if branch:
             data = db.session.execute(
-                f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM branch_reports br INNER JOIN category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id INNER JOIN branch b ON br.branch = b.id AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
+                f"SELECT br.comments, ct.name, sv.name AS Severity, b.name AS Branch FROM branch_reports br INNER JOIN"
+                f" category ct ON br.category = ct.id INNER JOIN severity sv ON br.severity = sv.id INNER JOIN branch"
+                f" b ON br.branch = b.id AND br.branch = {branch.id} WHERE date_added LIKE '%{date_}%'")
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
@@ -401,10 +412,15 @@ def most_failed_branch():
     status = request.json["status"]
     # maximum_value
     data = get_status_by_category_and_branch(branch, date, duration, status)
-
     return jsonify({"data": data, "maximum": maximum_value(data)})
 
 
-@app.route("/bootstrap",methods=["POST"])
+@app.route("/bootstrap", methods=["POST"])
 def bootstrapper():
     return jsonify(bootstrap_test())
+
+
+@app.route("/project/reports")
+def project_reports():
+    pass
+

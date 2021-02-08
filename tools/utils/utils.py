@@ -704,46 +704,39 @@ def daily_report_data():
         return res
 
 
-def email_report_body(report_body):
+def email_report_body():
     #  here we are going add the logo
     logo  = ""
     with open("image.jpg", "rb") as image_file:
         logo += base64.b64encode(image_file.read())
 
     # data looping
-    final = str()
-    data =
+    body = str()
+    data = daily_report_data()
     for item in data:
-        final += """
+        body += """
                 <tr valign="top">
                     <td>
                       <span class="tablesaw-cell-content">Cummins</span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                    
                     <td>
                       <b class="tablesaw-cell-label"></b><span class="tablesaw-cell-content"><img height="15px" src=""></span>
                     </td>
-                                
                </tr>
         """
 
@@ -812,9 +805,7 @@ def email_report_body(report_body):
                               </tr>
                             </thead>
                             <tbody>
-                              
                                 {body}
-
                             </tbody>
                           </table>
                         </div>
