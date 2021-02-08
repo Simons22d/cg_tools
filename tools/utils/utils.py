@@ -700,7 +700,9 @@ def daily_report_data():
                                     f"AND brd.date_added "
                                     f"LIKE '%{date}%' "
                                     f"ORDER BY brd.date_added DESC LIMIT 6")
+        print(">>>",branch)
         final.append({"name": branch.name, "data": [dict(row) for row in lookup]})
+
         print(final)
         res = {"reports": final, "date": date_}
         return res
