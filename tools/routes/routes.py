@@ -324,12 +324,11 @@ def email_2():
 def branch_reports_():
     date = request.json["date"]
     category = request.json["category"]
-    print(date, category)
-
     parsed = parser.parse(date)
+
     date_ = parsed.strftime("%Y-%m-%d")
     final = dict()
-    filename = "branch_reports.xlsx"
+    filename = f"Branch Report {date_}.xlsx"
     if int(category) == 1000:
         sss = dict()
         branches = Branch.query.all()
