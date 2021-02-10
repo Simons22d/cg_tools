@@ -1,5 +1,5 @@
 from tools import app, db
-from flask import request
+from flask import request,render_template
 from tools.utils.utils import get_issue_count, filename, excel
 from flask import jsonify, send_from_directory
 from flask_sqlalchemy import sqlalchemy
@@ -79,6 +79,11 @@ def search_bikes():
     # or Bike.query.filter(Bike.serial_number.like(term)).all()
 
     return jsonify(bikes_schema.dump(lookup))
+
+
+@app.route("/daily/report",methods=["GET","POST"])
+def daily_reports():
+    return render_template("reports.html")
 
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
@@ -218,7 +223,7 @@ def send_email_template():
     to = "denniskiruku@gmail.com"
     subject = "TEMPLATE EMAIL"
     body = email_report_body()
-    return send_mail(from_, to, subject, body)
+    return send_mail(to, subject, body)
 
 
 @app.route('/user/seed', methods=["POST"])

@@ -707,11 +707,14 @@ def daily_report_data():
     return res
 
 
+import os
+
+
 def email_report_body():
     #  here we are going add the logo
     logo  = ""
-    with open("image.jpg", "rb") as image_file:
-        logo += base64.b64encode(image_file.read())
+    # with open(f"{os.getcwd()}files/slow.jpg", "rb") as image_file:
+    #     logo += base64.b64encode(image_file.read())
 
     # data looping
     body = str()
