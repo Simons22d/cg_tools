@@ -30,26 +30,22 @@
             <tbody id="status_body">
                 {% if data %}
                     {% for item in data %}
-                        {{item['data']}}
                         {% if item['data']%}
                             <tr >
                                 <td scope="col" class="bold">{{ item['name'] }}</td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                {% for x in item["data"] %}
+                                    <td scope="col"><img src="{{ icons[x[0]['severity']] }}" alt="" height ="18px"></td>
+                                {% endfor %}
                             </tr>
                         {% else %}
                             <tr>
                                 <td scope="col" class="bold">{{ item['name'] }}</td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
-                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col">-</td>
+                                <td scope="col">-</td>
+                                <td scope="col">-</td>
+                                <td scope="col">-</td>
+                                <td scope="col">-</td>
+                                <td scope="col">-</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
