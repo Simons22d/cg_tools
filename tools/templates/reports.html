@@ -2,42 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Branch Email Report</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}">
 </head>
 <body>
-
-<div class="">
-    <div class="col-10 row">
-        <div class="col-lg-7 ml-4">
-            <div class="btn btn-sm" style="margin-left: -25px;font-size:14px;" id="reportDate"></div>
-        </div>
-        <div class="btn-group ml-4" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="remindUsers()"><i class="fas fa-redo"></i> &nbsp;Request Pending</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="branch_reports()"><i class="fas fa-arrow-down"></i>&nbsp; Download Report</button>
+<div class="container mt-5">
+    <div class="col-11 row">
+        <div class="col-lg-8 ml-4" style="width:100%">
+            <div class="h4" style="" id="reportDate">Branch Report</div>
+            <div class="h5 text-muted" style="" id="reportDate">{{ date }}</div>
         </div>
     </div>
     <br>
-    <div class="col-10 row mb-5" >
+    <div class="ml-4 col-8 row mb-5" >
         <table class="table table-borderless" style="border: 1px solid #dfdfdf; border-radius:15px;">
             <thead>
             <tr >
                 <th scope="col" class="bold">BRANCH</th>
                 <th scope="col">SAP</th>
                 <th scope="col">ETR</th>
-                <th scope="col">NETWORKS</th>
+                <th scope="col">NTWK</th>
                 <th scope="col">EMAILS</th>
-                <th scope="col">PRINTERS</th>
+                <th scope="col">PRNTR</th>
                 <th scope="col">MPESA</th>
             </tr>
             </thead>
             <tbody id="status_body">
-
+                {% if data %}
+                    {% for item in data %}
+                        {{item['data']}}
+                        {% if item['data']%}
+                            <tr >
+                                <td scope="col" class="bold">{{ item['name'] }}</td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td scope="col" class="bold">{{ item['name'] }}</td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                                <td scope="col"><img src="{{ icons["success"] }}" alt="" height ="18px"></i></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </tbody>
         </table>
+        <div class="container">
+               <div class="row mt-4 mb-5" style="width:100%; margin-left:-25px;">
+                   <div><img class="pl-2" src='{{ icons["success"]  }}' alt="" height="15px">  Success</div>
+                   <div><img class="ml-2 pl-2" src='{{ icons["slow"] }}' alt="" height="15px">  Slow</div>
+                   <div><img class="ml-2 pl-2" src='{{ icons["error"] }}' alt="" height="15px">  Error</div>
+               </div>
+        </div>
+
+        <div class="mt-4">
+        <p class="h6 text-muted">User Branch Assignment</p>
+            <hr>
+        {% if users %}
+        {% for user in users %}
+
+        <div class="row ml-1">
+            <span class="email ">{{ user["id"] }}</span>.&nbsp;
+            <span class="email ">{{ user["email"] }}</span> —
+            <span class="email">{{ user["branch"] }}</span>
+        </div>
+
+        {% endfor %}
+        {% endif %}
+        </div>
+     </div>
     </div>
 
 </div>
-<br><br>
 
+<br><br>
+<script src="{{ url_for('static',filename='jquery/jquery-3.3.1.js')}}"></script>
+<script src="{{ url_for('static',filename='popper/popper.js')}}"></script>
 </body>
 </html>

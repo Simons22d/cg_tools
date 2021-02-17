@@ -1,6 +1,6 @@
 from tools import app, db
 from flask import request, render_template
-from tools.utils.utils import get_issue_count, filename, excel
+from tools.utils.utils import get_issue_count, filename, excel,error_icon,slow_icon,success_icon
 from flask import jsonify, send_from_directory
 from flask_sqlalchemy import sqlalchemy
 
@@ -15,6 +15,7 @@ from tools import mail
 from datetime import datetime
 from dateutil import parser
 import pandas as pd
+import imgkit
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
@@ -77,7 +78,6 @@ def search_bikes():
     lookup = Bike.query.all()
     # lookup = Bike.query.filter(Bike.plate_number.like(term)).all()
     # or Bike.query.filter(Bike.serial_number.like(term)).all()
-
     return jsonify(bikes_schema.dump(lookup))
 
 
@@ -85,11 +85,29 @@ def search_bikes():
 def daily_reports():
     data = daily_report_data()
     icons = {
-        "success": "<i class=\"fas fa-check-circle\" style='color:#0f0;'></i>",
-        "slow": "<i class=\"far fa-times-circle\" style='color:#FF731C;'></i>",
-        "error": "<i class=\"fas fa-exclamation-triangle\" style='color:#f00;'></i>"
+        "success": success_icon(),
+        "slow": slow_icon() ,
+        "error": error_icon()
     }
-    return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons)
+
+    users = User.query.all()
+    users_ = users_schema.dump(users)
+    final = list()
+
+    for user in users_:
+        branch = Branch.query.get(user["branch"])
+        user.update({"branch": branch_schema.dump(branch)["name"]})
+        final.append(user)
+
+
+
+    return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons ,users = final)
+
+
+@app.route("/branch/image",methods=['POST',"GET"])
+def x__():
+    imgkit.from_url('http://localhost:9000/daily/report', 'out.jpg')
+    return dict()
 
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
@@ -103,7 +121,6 @@ def add_branch_report():
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
         if comments.strip():
-
             # adding to the DB
             lookup = BranchReports(branch, severity, category_id, comments)
             db.session.add(lookup)
