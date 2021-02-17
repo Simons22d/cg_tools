@@ -84,12 +84,9 @@ def search_bikes():
 @app.route("/daily/report", methods=["GET", "POST"])
 def daily_reports():
     data = daily_report_data()
-    icons = {
-        "success": success_icon(),
-        "slow": slow_icon() ,
-        "error": error_icon()
-    }
+    icons = [success_icon(),slow_icon() ,error_icon()]
 
+    data_  = dict()
     users = User.query.all()
     users_ = users_schema.dump(users)
     final = list()
