@@ -22,11 +22,8 @@ cors = CORS(app)
 # setting sql_alchemy database consts
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://{db_user}:{db_pass}@localhost:3306/tools"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-<<<<<<< HEAD
 app.config["SECRET_KEY"] = f"{random.getrandbits(512)}"
-=======
 app.config["SECRET_KEY"] = '123454'
->>>>>>> 80ca4b86df191aa4d0744507e346b4a750df908c
 app.config["MAIL_SERVER"] = "mail.cargen.com"
 app.config["MAIL_PORT"] = 4050
 app.config["MAIL_USE_TLS"] = False

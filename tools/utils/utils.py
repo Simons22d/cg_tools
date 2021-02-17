@@ -702,7 +702,6 @@ def daily_report_data():
         lookup = [dict(row) for row in lookup]
         final.append({"name": branch.name, "data": lookup})
 
-    print(final)
     res = {"reports": final, "date": date_}
     return res
 
