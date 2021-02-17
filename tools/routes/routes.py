@@ -1,5 +1,5 @@
 from tools import app, db
-from flask import request,render_template
+from flask import request, render_template
 from tools.utils.utils import get_issue_count, filename, excel
 from flask import jsonify, send_from_directory
 from flask_sqlalchemy import sqlalchemy
@@ -81,9 +81,15 @@ def search_bikes():
     return jsonify(bikes_schema.dump(lookup))
 
 
-@app.route("/daily/report",methods=["GET","POST"])
+@app.route("/daily/report", methods=["GET", "POST"])
 def daily_reports():
-    return render_template("reports.html")
+    data = daily_report_data()
+    icons = {
+        "success": "<i class=\"fas fa-check-circle\" style='color:#0f0;'></i>",
+        "slow": "<i class=\"far fa-times-circle\" style='color:#FF731C;'></i>",
+        "error": "<i class=\"fas fa-exclamation-triangle\" style='color:#f00;'></i>"
+    }
+    return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons)
 
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
@@ -277,7 +283,7 @@ def remove_user():
     return jsonify(user_schema.dump(data))
 
 
-@app.route("/branch/todays/submit", methods=["POST","GET"])
+@app.route("/branch/todays/submit", methods=["POST", "GET"])
 def get_lastest_update():
     data = daily_report_data()
     return jsonify(data)
@@ -424,4 +430,3 @@ def bootstrapper():
 @app.route("/project/reports")
 def project_reports():
     pass
-
