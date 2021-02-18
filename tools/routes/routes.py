@@ -103,6 +103,8 @@ def daily_reports():
 
 @app.route("/branch/image",methods=['POST',"GET"])
 def x__():
+    config_path = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+
     imgkit.from_url('http://localhost:9000/daily/report', 'out.jpg')
     return dict()
 
