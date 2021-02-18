@@ -500,10 +500,14 @@ def report_added_today(date):
     return then == today
 
 
-def send_mail(_to, subject, body):
+def send_mail(_to, subject, body,attachment=[]):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
+    # if attachment:
+    #     msg.attach("image.txt")
+
     try:
+
         mail.send(msg)
     except smtplib.SMTPRecipientsRefused as e:
         log("email could not email user")
@@ -714,7 +718,22 @@ import os
 
 def email_report_body(image):
     body = f"""
-            <img src='{image}' alt='report image'/>
+            <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+    Dear All,<br><br>
+    Please find the daily branch reports attached.
+    <br>
+    Kind Regards,<br>
+    IT Support.    
+</body>
+</html>
     """
     return body
 

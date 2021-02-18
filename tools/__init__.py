@@ -29,7 +29,8 @@ app.config["MAIL_PORT"] = 4050
 app.config["MAIL_USE_TLS"] = False
 app.config["MAIL_USERNAME"] = "itsupport@cargen.com"
 app.config["MAIL_PASSWORD"] = 'support2020'
-
+app.config["MAIL_ASCII_ATTACHMENTS"] = True
+# MAIL_ASCII_ATTACHMENTS
 # adding marshmallow
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
