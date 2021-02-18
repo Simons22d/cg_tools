@@ -14,6 +14,7 @@ from tools import mail
 from tools.models.models import User, Branch, BranchReports
 import imgkit
 from datauri import DataURI
+from tools import app
 
 from dotmap import DotMap
 import base64
@@ -500,12 +501,12 @@ def report_added_today(date):
     return then == today
 
 
-def send_mail(_to, subject, body,attachment=[]):
+def send_mail(_to, subject, body,attachment):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
-    # if attachment:
-    #     msg.attach("image.txt")
-
+    if attachment:
+        with app.open_resource(f"../{attachment}.png") as fp:
+            msg.attach(f"{attachment}.png", "image/png", fp.read())
     try:
 
         mail.send(msg)

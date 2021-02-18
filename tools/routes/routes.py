@@ -103,12 +103,16 @@ def daily_reports():
 def x__():
     config_path = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 
-    imgkit.from_url('http://localhost:9000/daily/report', 'out.jpg')
+    imgkit.from_url('http://localhost:9000/daily/report', 'out.png')
     return dict()
 
 
 @app.route("/department/inform", methods=['POST'])
 def department_inform():
+    # generate an image
+    imgkit.from_url('http://localhost:9000/daily/report', 'out.png')
+
+    # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()),attachment="image.txt")
     return jsonify({}), 200
 
