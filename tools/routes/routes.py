@@ -1,6 +1,6 @@
 from tools import app, db
 from flask import request, render_template
-from tools.utils.utils import get_issue_count, filename, excel,error_icon,slow_icon,success_icon
+from tools.utils.utils import get_issue_count, filename, excel, error_icon, slow_icon, success_icon
 from flask import jsonify, send_from_directory
 from flask_sqlalchemy import sqlalchemy
 
@@ -9,7 +9,7 @@ from tools.models.models import Bike, BranchReports, Category, CategorySchema, B
 
 from tools.utils.utils import (send_mail, remind_users, email_info, user_has_submitted, get_by_type_branch,
                                get_status_by_category_and_duration, get_status_by_category_and_branch, maximum_value,
-                               bootstrap_test, daily_report_data, email_report_body)
+                               bootstrap_test, daily_report_data, email_report_body, email_report_body,reports_image)
 from flask_mail import Message
 from tools import mail
 from datetime import datetime
@@ -84,9 +84,9 @@ def search_bikes():
 @app.route("/daily/report", methods=["GET", "POST"])
 def daily_reports():
     data = daily_report_data()
-    icons = [success_icon(),slow_icon() ,error_icon()]
+    icons = [success_icon(), slow_icon(), error_icon()]
 
-    data_  = dict()
+    data_ = dict()
     users = User.query.all()
     users_ = users_schema.dump(users)
     final = list()
@@ -96,17 +96,21 @@ def daily_reports():
         user.update({"branch": branch_schema.dump(branch)["name"]})
         final.append(user)
 
+    return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons, users=final)
 
 
-    return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons ,users = final)
-
-
-@app.route("/branch/image",methods=['POST',"GET"])
+@app.route("/branch/image", methods=['POST', "GET"])
 def x__():
     config_path = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 
     imgkit.from_url('http://localhost:9000/daily/report', 'out.jpg')
     return dict()
+
+
+@app.route("/department/inform",methods=['POST'])
+def department_inform():
+    send_mail("denis.kiruku@cargen.com","daily branch report",email_report_body(reports_image()))
+    return jsonify({}), 200
 
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
