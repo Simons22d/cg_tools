@@ -110,8 +110,7 @@ def x__():
 @app.route("/department/inform", methods=['POST'])
 def department_inform():
     # generate an image
-    imgkit.from_url('http://localhost:9000/daily/report', 'out.png')
-
+    reports_image("192.168.12.200")
     # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()),attachment="image.txt")
     return jsonify({}), 200
