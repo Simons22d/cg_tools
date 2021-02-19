@@ -501,7 +501,7 @@ def report_added_today(date):
     return then == today
 
 
-def send_mail(_to, subject, body,attachment):
+def send_mail(_to, subject, body,attachment=""):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
     if attachment:
