@@ -504,11 +504,11 @@ def report_added_today(date):
 def send_mail(_to, subject, body,attachment=""):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
+    import os
     if attachment:
-        with app.open_resource(attachment) as fp:
-            msg.attach(f"{attachment}.png", "image/png", fp.read())
+        with app.open_resource(os.path.join('home','dev','cg_tools',attachment)) as fp:
+            msg.attach(os.path.join('home','dev','cg_tools',attachment), "image/png", fp.read())
     try:
-
         mail.send(msg)
     except smtplib.SMTPRecipientsRefused as e:
         log("email could not email user")
