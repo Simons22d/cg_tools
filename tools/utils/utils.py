@@ -731,7 +731,7 @@ def email_report_body(image):
     <body>
     Dear All,<br><br>
     Please find the daily branch reports attached.
-    <br>
+    <br><br>
     Kind Regards,<br>
     IT Support.    
 </body>

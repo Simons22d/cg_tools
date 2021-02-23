@@ -34,7 +34,8 @@
                             <tr >
                                 <td scope="col" class="bold">{{ item['name'] }}</td>
                                 {% for x in item["data"] %}
-                                    <td scope="col"><img src="{{ icons[x[0]['severity']] }}" alt="" height ="18px"></td>
+
+                                    <td scope="col"><img src="{{ icons[x['severity']] }}" alt="" height ="18px"></td>
                                 {% endfor %}
                             </tr>
                         {% else %}
