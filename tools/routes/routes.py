@@ -120,13 +120,11 @@ def branch_reports_pdf():
 def department_inform():
     # generate an image
     # reports_image("192.168.12.200")
-    dd = subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report.pdf'])
-    # dd_ = subprocess.call(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report_2.pdf'])
-
+    file_name = datetime.now().strftime("%A_%d_%b_%Y")
+    dd = subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
 
     # send email with attachments
-    send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment="branch_report.pdf")
-    # send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment="branch_report_.pdf")
+    send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment=f"{file_name}.pdf")
     return jsonify({}), 200
 
 
