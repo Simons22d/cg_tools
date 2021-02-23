@@ -507,8 +507,8 @@ def send_mail(_to, subject, body,attachment=""):
     import os
 
     if attachment:
-        with app.open_resource(f"'/home/dev/cg_tools/{attachment}") as fp:
-            msg.attach(f"'/home/dev/cg_tools/{attachment}", "application/pdf", fp.read())
+        with app.open_resource(f"{attachment}") as fp:
+            msg.attach(f"{attachment}", "application/pdf", fp.read())
     try:
 
         mail.send(msg)

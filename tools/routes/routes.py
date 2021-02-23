@@ -121,7 +121,8 @@ def department_inform():
     # generate an image
     # reports_image("192.168.12.200")
     file_name = datetime.now().strftime("%A_%d_%b_%Y")
-    dd = subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
+    subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
+    subprocess.call(["mv", f"/home/dev/cg_tools/tools/{file_name}", "/home/dev/cg_tools/"])
 
     # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment=f"{file_name}.pdf")
