@@ -122,6 +122,7 @@ def department_inform():
     # reports_image("192.168.12.200")
     file_name = datetime.now().strftime("%A_%d_%b_%Y")
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
+    # moving the file
     subprocess.call(["mv", f"/home/dev/cg_tools/tools/{file_name}", "/home/dev/cg_tools/"])
 
     # send email with attachments
