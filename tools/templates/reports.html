@@ -71,17 +71,17 @@
 
     </div>
         <div class="container">
-         <div class="mt-5 row">
+         <div class="mt-5">
         <p class="h6 text-muted">User Branch Assignment</p>
             <hr>
         {% if users %}
         {% for user in users %}
 
-        <div class="row ml-1">
-            <span class="email ">{{ user["id"] }}</span>.&nbsp;
-            <span class="email ">{{ user["email"] }}</span> —
-            <span class="email">{{ user["branch"] }}</span>
-        </div>
+            <div class="row ml-1">
+                <span class="email ">{{ user["id"] }}</span>.&nbsp;
+                <span class="email ">{{ user["email"] }}</span> —
+                <span class="email">{{ user["branch"] }}</span>
+            </div>
 
         {% endfor %}
         {% endif %}
