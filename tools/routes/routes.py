@@ -118,7 +118,8 @@ def branch_reports_pdf():
 @app.route("/department/inform", methods=['POST'])
 def department_inform():
     # generate an pdf
-    file_name = datetime.now().strftime("%A_%d_%b_%Y")
+    import secrets
+    file_name = datetime.now().strftime("%A_%d_%b_%Y") + secrets.token_hex(8)
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
 
     # moving the file
