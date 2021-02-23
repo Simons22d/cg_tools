@@ -123,7 +123,8 @@ def department_inform():
     file_name = datetime.now().strftime("%A_%d_%b_%Y")
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
     # moving the file
-    subprocess.call(["mv", f"/home/dev/cg_tools/tools/{file_name}", "/home/dev/cg_tools/"])
+    # subprocess.call(["mv", f"/home/dev/cg_tools/tools/Tuesday_23_Feb_2021.pdf", "/home/dev/cg_tools/"])
+    subprocess.call(["mv", f"/home/dev/cg_tools/{file_name}", "/home/dev/cg_tools/tools"])
 
     # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment=f"{file_name}.pdf")
