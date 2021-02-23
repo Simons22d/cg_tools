@@ -122,7 +122,10 @@ def department_inform():
     # reports_image("192.168.12.200")
 
     # genarate pdf
+    import os
+    os.chdir(os.path.join("home","dev","cg_tools","tools"))
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report.pdf'])
+    os.chdir(os.path.join("home", "dev", "cg_tools"))
     # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment="branch_report.pdf")
     return jsonify({}), 200
