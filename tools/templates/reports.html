@@ -68,12 +68,13 @@
         <p class="h6 text-muted">User in-charge</p>
         {% if users %}
         {% for user in users %}
-
-            <small class="row ml-1 ">
-                <span class="email ">{{ user["id"] }}</span>.&nbsp;
-                <span class="email ">{{ user["email"] }}</span> —
-                <span class="email">{{ user["branch"] }}</span>
-            </small>
+            <div>
+                <small class="row ml-1 ">
+                    <span class="email ">{{ user["id"] }}</span>.&nbsp;
+                    <span class="email ">{{ user["email"] }}</span> —
+                    <span class="email">{{ user["branch"] }}</span>
+                </small>
+            </div>
         {% endfor %}
         {% endif %}
         </div>
