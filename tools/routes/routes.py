@@ -124,9 +124,9 @@ def department_inform():
     # genarate pdf
     import os
     # os.chdir(os.path.join("/","home","dev","cg_tools","tools"))
-    subprocess.run(['cd','/home/dev/cg_tools/tools'])
+    # toolssubprocess.run(['cd','/home/dev/cg_tools/tools'])tools
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report.pdf'])
-    subprocess.run(['cd', '/home/dev/cg_tools'])
+    # subprocess.run(['cd', '/home/dev/cg_tools'])
 
     # os.chdir(os.path.join(("/","home", "dev", "cg_tools")))
     # send email with attachments
