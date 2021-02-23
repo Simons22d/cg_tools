@@ -663,8 +663,8 @@ def remind_users():
     reports = [x[0] for x in reports_]
     users = users_list()
     users_to_email_ = np.setdiff1d(users, reports)
-    print(users, reports)
-    print(users_to_email_)
+    # print(users, reports)
+    # print(users_to_email_)
     if users_to_email_.any():
         for user in users_to_email_:
             # get user
@@ -750,7 +750,7 @@ def user_has_submitted(branch_user_in_charge):
 
     if reports:
         for report in reports:
-            print(report)
+            # print(report)
             print(branch_user_in_charge, report["branch"])
             if int(branch_user_in_charge) == int(report["branch"]):
                 return True
@@ -932,7 +932,7 @@ SEVERITY and CATEGORY for branch
 
 def get_daily_branch(branch, date, severity, category):
     query = f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND day(date_added) = day('{date}') AND severity = {severity} AND category= {category}"
-    print(query)
+    # print(query)
     return to_list(db.session.execute(query))
 
 

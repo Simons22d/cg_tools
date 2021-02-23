@@ -96,7 +96,6 @@ def daily_reports():
         branch = Branch.query.get(user["branch"])
         user.update({"branch": branch_schema.dump(branch)["name"]})
         final.append(user)
-    print(data)
     return render_template("reports.html", data=data["reports"], date=data["date"], icons=icons, users=final)
 
 
@@ -397,7 +396,6 @@ def branch_reports_():
             if data:
                 pro = [dict(x) for x in data]
                 for x in pro:
-                    print(x)
                     ccc.update({x["name"].upper(): x["Severity"]})
                     comnts += f"{x['name'].upper()} - {x['comments']};   "
                     ccc.update({"comments".upper(): comnts})
@@ -418,10 +416,10 @@ def branch_reports_():
             ccc = dict()
             comnts = ""
             pro = [dict(x) for x in data]
-            print(pro)
+
             if pro:
                 for x in pro:
-                    print(x)
+
                     ccc.update({x["name"].upper(): x["Severity"]})
                     comnts += f"{x['name'].upper()} - {x['comments']};   "
                     ccc.update({"comments".upper(): comnts})
