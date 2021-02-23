@@ -34,8 +34,7 @@
                             <tr >
                                 <td scope="col" class="bold">{{ item['name'] }}</td>
                                 {% for x in item["data"] %}
-
-                                    <td scope="col"><img src="{{ icons[x['severity']] }}" alt="" height ="18px"></td>
+                                    <td scope="col"><img src="{{ icons[x['severity']] }}" alt="" height ="15px"></td>
                                 {% endfor %}
                             </tr>
                         {% else %}
@@ -55,7 +54,7 @@
                 {% endif %}
             </tbody>
         </table>
-        <div class="container">
+        <div class="container row">
                <div class="row mt-4 mb-5" style="width:100%; margin-left:-25px;">
                    <div><img class="pl-2" src='{{ icons[0]  }}' alt="" height="15px">  Success</div>
                    <div><img class="ml-2 pl-2" src='{{ icons[1] }}' alt="" height="15px">  Slow</div>
