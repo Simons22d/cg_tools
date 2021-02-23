@@ -505,7 +505,7 @@ def send_mail(_to, subject, body,attachment=""):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
     if attachment:
-        with app.open_resource(f"../{attachment}.png") as fp:
+        with app.open_resource(attachment) as fp:
             msg.attach(f"{attachment}.png", "image/png", fp.read())
     try:
 
