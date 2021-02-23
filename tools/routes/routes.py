@@ -16,6 +16,7 @@ from datetime import datetime
 from dateutil import parser
 import pandas as pd
 import imgkit
+import subprocess
 
 branch_cat_schema = BranchReportsSchema()
 branches_cat_schema = BranchReportsSchema(many=True)
@@ -107,12 +108,23 @@ def x__():
     return dict()
 
 
+@app.route("/branch/report/pdf", methods=['POST', "GET"])
+def branch_reports_pdf():
+    # command
+    #  xvfb-run wkhtmltopdf http://192.168.12.200:9000/daily/report branch_report.pdf
+    subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report.pdf'])
+    return dict()
+
+
 @app.route("/department/inform", methods=['POST'])
 def department_inform():
     # generate an image
-    reports_image("192.168.12.200")
+    # reports_image("192.168.12.200")
+
+    # genarate pdf
+    subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', 'branch_report.pdf'])
     # send email with attachments
-    send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()),attachment="image.txt")
+    send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment="branch_report.pdf")
     return jsonify({}), 200
 
 
@@ -124,7 +136,6 @@ def image_():
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
 def add_branch_report():
-
     # get all categories
     categories = Category.query.all()
     branch = request.json["branch"]
