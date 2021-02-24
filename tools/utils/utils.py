@@ -15,6 +15,8 @@ from tools.models.models import User, Branch, BranchReports
 import imgkit
 from datauri import DataURI
 from tools import app
+import os
+from datetime import timedelta
 
 from dotmap import DotMap
 import base64
@@ -501,7 +503,7 @@ def report_added_today(date):
     return then == today
 
 
-def send_mail(_to, subject, body,attachment=""):
+def send_mail(_to, subject, body, attachment=""):
     _from = "itsupport@cargen.com"
     msg = Message(subject, sender="itsupport@cargen.com", recipients=[_to], html=body)
     import os
@@ -716,7 +718,27 @@ def daily_report_data():
     return res
 
 
-import os
+def one_day_back(offset):
+    branches = Branch.query.all()
+    now = datetime.now()
+    new_date = now - timedelta(offset)
+    date_ = new_date.strftime("%A, %d %b %Y")
+    # final dict
+    final = list()
+    for branch in branches:
+        lookup = db.session.execute(f"SELECT b.*, brd.* "
+                                    f"FROM branch b "
+                                    f"INNER JOIN branch_reports brd "
+                                    f"ON b.id = brd.branch "
+                                    f"AND brd.branch = {branch.id} "
+                                    f"AND brd.date_added "
+                                    f"LIKE '%{new_date}%' "
+                                    f"ORDER BY brd.date_added DESC LIMIT 6")
+        lookup = [dict(row) for row in lookup]
+        final.append({"name": branch.name, "data": lookup})
+
+    res = {"reports": final, "date": date_}
+    return res
 
 
 def email_report_body(image):
@@ -943,7 +965,7 @@ Weekly filter TYPE needed
 
 def get_weekly_branch(branch, date, severity, category):
     query = f"SELECT  * FROM  branch_reports WHERE branch = {branch} AND week(date_added) = week('{date}') AND severity = {severity} AND category= {category}"
-    print(query)
+    # print(query)
     return to_list(db.session.execute(query))
 
 

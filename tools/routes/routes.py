@@ -123,7 +123,7 @@ def department_inform():
     subprocess.run(['xvfb-run', 'wkhtmltopdf', 'http://192.168.12.200:9000/daily/report', f"{file_name}.pdf"])
 
     # moving the file
-    subprocess.call(["mv", f"/home/dev/cg_tools/{file_name}.pdf", "/home/dev/cg_tools/tools"])
+    subprocess.call(["mv",f"/home/dev/cg_tools/{file_name}.pdf", "/home/dev/cg_tools/tools"])
 
     # send email with attachments
     send_mail("denniskiruku@gmail.com", "daily branch report", email_report_body(image_()), attachment=f"{file_name}.pdf")
@@ -138,6 +138,7 @@ def image_():
 
 @app.route("/branch/report/add", methods=['POST', 'GET'])
 def add_branch_report():
+
     # get all categories
     categories = Category.query.all()
     branch = request.json["branch"]
@@ -147,15 +148,17 @@ def add_branch_report():
         category_id = int(category.id)
         severity = int(data[category.name.lower()]["severity"])
         comments = data[category.name.lower()]["comments"]
+
         if comments.strip():
+
             # adding to the DB
             lookup = BranchReports(branch, severity, category_id, comments)
             db.session.add(lookup)
             db.session.commit()
             data = data
+
         else:
             data = {}
-
     return jsonify(data)
 
 
@@ -200,7 +203,6 @@ def branch_reports():
     """
     > bike reports
     > branch reports
-    >
     """
     category = request.json["category"]
     start = request.json["start"]
@@ -229,7 +231,6 @@ def seed_categories():
         {"name": "slow", "weight": 2},
         {"name": "not functional", "weight": 3}
     ]
-
     for category in categories:
         lookup = Severity(category["name"].lower().capitalize(), category["weight"])
         try:
