@@ -328,7 +328,7 @@ def remove_user():
     return jsonify(user_schema.dump(data))
 
 
-@app.route("/branch/todays/submit", methods=["POST", "GET"])
+@   app.route("/branch/todays/submit", methods=["POST", "GET"])
 def get_lastest_update():
     data = daily_report_data()
     return jsonify(data)

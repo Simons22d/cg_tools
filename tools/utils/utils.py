@@ -715,6 +715,9 @@ def daily_report_data():
         final.append({"name": branch.name, "data": lookup})
 
     res = {"reports": final, "date": date_}
+
+    # here we are going to add emails comments
+
     return res
 
 
